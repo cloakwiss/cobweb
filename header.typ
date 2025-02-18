@@ -9,24 +9,25 @@
 _*In*_
 \
 === COMPUTER SCIENCE AND ENGINEERING  (Cyber Security)
+=== Semester - VI
 \
 *_By_*\ 
 \
-  Ayush Paranjale \
-  Gunangi Bagat \
-  Himanshu Pawar \
-  Prabhu Kalantri \
+  Ayush Paranjale(35) \
+  Gunangi Bagat() \
+  Himanshu Pawar(43) \
+  Prabhu Kalantri() \
   
 _*Guide*_ \ \
   Prof. K Roy \ \
 
-#image("logo.jpeg", fit: "contain", height: 15%)
+#image("logo.png", fit: "contain", height: 15%)
 
 
 ==== Department of Computer Science and Engineering -- Cyber Security \ Shri Ramdeobaba College of Engineering & Management, Nagpur 440 013
 
 (An Autonomous Institute affiliated to Rashtrasant Tukdoji Maharaj \ Nagpur University Nagpur)
 
-*August 2024*
+*December 2024*
 
 ]
