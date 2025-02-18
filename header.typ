@@ -14,7 +14,7 @@ _*In*_
 *_By_*\ 
 \
   Ayush Paranjale(35) \
-  Gunangi Bagat() \
+  Gunangi Bhagat() \
   Himanshu Pawar(43) \
   Prabhu Kalantri() \
   

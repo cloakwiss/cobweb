@@ -21,12 +21,25 @@ more than they are prepared to, which is not the focus of most other similar too
 - Authoring _ePUB_ file
 
 === Requirement Analysis
+<requirement-analysis>
+ - Site scraping
+ - Show page content size
+ - Converting to epub
 
 === Testing
+<testing>
+ - Testing bounded site scraping
+ - Conversion to epub for small sites
 
 === Evaluation
+<evaluation>
+ - Evaluating the scraper on large site and profiling
+ - Mapping web routes to epub chapters/section
 
 === Documention & Reporting
+<documention-reporting>
+ - Creating a man page
+ - Guides for installation
 
 == Methodology
 - Fetching specified webpages and its assets
@@ -37,10 +50,15 @@ more than they are prepared to, which is not the focus of most other similar too
 - Archive all the file finally in ePUB.
 
 == Technology
-- Go
-- XML
-- TidyHtml
-- Pandoc 
+- *Go*
+	- Has good concurrency pattern 
+	- Has feature rich standard library particularly for http client and server
+- *XML*
+	- It is foundation of epub
+- *HTML-Tidy*
+	- HTML-Tidy corrects and clean up HTML content by fixing markup errors such as mismatched, mis-nested, and missing tags; missing end "/" tags; missing quotations; and many, many more discrepant conditions, and serves as an HTML pretty printer.
+- *Pandoc*
+	- A popular inter-document conversiong tool
 
 == Functional Specification (Deliverables)
 - Fetching and storing webpage/website recurisively.
