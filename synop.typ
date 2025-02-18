@@ -1,3 +1,15 @@
+#let guide = "Prof Kaushik Roy"
+#let members = (
+  ("Ayush Paranjale", 35),
+  ("Himanshu Pawar", 43),
+  ("Gunangi Bhagat", 5),
+  ("Prabhu Kalantri", 57),
+)
+
+#import "./extra.typ": header, footer
+
+#header(members, guide)
+
 = Problem Definition
 
 With the rapid evolution of the internet, online content is frequently modified, moved, or deleted, leading to broken links and loss of valuable information.
@@ -70,3 +82,5 @@ A minimal web archiving tool that enables users to fetch and store webpages or e
 The tool will ensure content preservation by converting HTML to well-structured XHTML, maintaining compatibility and consistency across different devices.
 Additionally, the archived content will be bundled into an EPUB format, providing a portable and easily accessible offline reading experience.
 The project will focus on efficiency, simplicity, and usability, ensuring a seamless process for users to save and organize web content for future reference.
+
+#footer(members, guide)
