@@ -10,9 +10,9 @@ import (
 )
 
 type ExtractedAttr struct {
-	ParentTag string   "json:parent_tag"
-	Attribute string   "json:attr"
-	Value     []string "json:value"
+	tag  string
+	attr string
+	val  []string
 }
 
 func Start(name string) {
@@ -28,9 +28,9 @@ func Start(name string) {
 		case xml.StartElement:
 			for _, v := range t.Attr {
 				attrs = append(attrs, ExtractedAttr{
-					ParentTag: t.Name.Local,
-					Attribute: v.Name.Local,
-					Value:     strings.Split(v.Value, " "),
+					tag:  t.Name.Local,
+					attr: v.Name.Local,
+					val:  strings.Split(v.Value, " "),
 				})
 			}
 		}
