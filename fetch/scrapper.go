@@ -9,37 +9,68 @@ package fetch
 
 import (
 	"fmt"
+	"net/url"
+	"strings"
+
 	"github.com/gocolly/colly"
 	// "net/url"
 )
 
 // Obtained from Brave Browser
 const DefaultUserAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"
-const Target = "https://matklad.github.io/"
 
 // This is the function that will be start the crawling and scrapping
-func Start(inchan chan int, outchan chan int) {}
+// func Start(inchan chan int, outchan chan int) {}
 
-// This is supposed to find all path in
-func mainloop() {
+// This is supposed to find all path in the page with some limit on recursion
+func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
+	// recurse limit is unused
+	_ = recurse_limit
 	c := colly.NewCollector(
-		colly.AllowedDomains("matklad.github.io"),
+		colly.AllowedDomains(removeProtocolPrefix(target)),
 	)
-
 	c.UserAgent = DefaultUserAgent
-	c.OnHTML("a[href]", func(e *colly.HTMLElement) {
-		link := e.Attr("href")
-		// Print link
-		fmt.Printf("Link found: %q -> %s\n", e.Text, link)
-	})
+
+	var pages map[url.URL][]byte = make(map[url.URL][]byte)
+
+	// Need to add others too
+	{
+		// Anchor will not be the only tag used to link to other pages
+		c.OnHTML("a[href]", func(e *colly.HTMLElement) {
+			link := e.Attr("href")
+			c.Visit(e.Request.AbsoluteURL(link))
+		})
+
+		// will look for other assets
+		c.OnHTML("link[href]", func(e *colly.HTMLElement) {
+			link := e.Attr("href")
+			c.Visit(e.Request.AbsoluteURL(link))
+		})
+	}
 
 	c.OnResponse(func(res *colly.Response) {
-		fmt.Printf("Body of %s:\n %s\n", res.Request.URL, string(res.Body))
+		pages[*res.Request.URL] = res.Body
+		fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
 	// c.OnRequest(func(r *colly.Request) {
 	// 	fmt.Println("Visiting", r.URL.String())
 	// })
 
-	c.Visit(Target)
+	c.Visit(target)
+
+	for key := range pages {
+		fmt.Printf("Page: %s\n", key.EscapedPath())
+	}
+
+	return pages
+}
+
+func removeProtocolPrefix(url string) string {
+	_, after, found := strings.Cut(url, "//")
+	if found {
+		return after
+	} else {
+		return ""
+	}
 }
