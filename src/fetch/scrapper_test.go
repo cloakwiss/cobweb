@@ -6,7 +6,7 @@ import (
 	"github.com/cloakwiss/cobweb/fetch"
 )
 
-const Target = "http://localhost:8080"
+const Target = "http://stract.com/"
 
 func Test_Mainloop(t *testing.T) {
 	fetch.Mainloop(Target, 1)
