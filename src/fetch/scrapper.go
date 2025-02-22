@@ -61,7 +61,7 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 	{
 		htmlHandler := func(e *colly.HTMLElement) {
 			link := e.Attr("href")
-			c.Visit(e.Request.AbsoluteURL(link))
+			e.Request.Visit(link)
 		}
 
 		// Anchor will not be the only tag used to link to other pages
