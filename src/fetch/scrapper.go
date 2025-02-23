@@ -33,7 +33,7 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 	// recurse limit is unused
 	c := colly.NewCollector(
 		colly.AllowedDomains(removeProtocolPrefix(targetUrl)),
-		colly.MaxDepth(int(recurse_limit)),
+		colly.MaxDepth(int(recurse_limit)+1),
 	)
 
 	//TODO: Need to add a delay too
