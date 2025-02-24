@@ -12,7 +12,10 @@ const target = "http://localhost:8080/std/index.html"
 
 func Test_Mainloop(t *testing.T) {
 	pages := fetch.Mainloop(target, 1)
-	for key := range pages {
+	npages := make(map[string][]byte)
+	for key, val := range pages {
 		fmt.Printf("Page: %s\n", key.String())
+		npages[key.Path] = val
 	}
+	fetch.WriteTozip(npages, "output.zip")
 }
