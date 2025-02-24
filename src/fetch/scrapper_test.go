@@ -1,6 +1,7 @@
 package fetch_test
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/cloakwiss/cobweb/fetch"
@@ -10,5 +11,8 @@ import (
 const target = "http://localhost:8080/std/index.html"
 
 func Test_Mainloop(t *testing.T) {
-	fetch.Mainloop(target, 1)
+	pages := fetch.Mainloop(target, 1)
+	for key := range pages {
+		fmt.Printf("Page: %s\n", key.String())
+	}
 }
