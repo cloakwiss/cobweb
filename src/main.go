@@ -4,16 +4,12 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/cloakwiss/cobweb/app"
 	"github.com/spf13/cobra"
 )
 
-type arguments struct {
-	inputUrl, outputEpub string
-	depth                uint
-}
-
 func main() {
-	var args arguments
+	var args app.Options
 	// This should accept more than 1 urls
 	rootCmd := &cobra.Command{
 		Use:           "cobweb",
@@ -24,7 +20,10 @@ func main() {
 		Args:          cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, arg []string) error {
 			if len(arg) == 1 {
-				args.inputUrl = arg[0]
+				if err := args.AddUrl(arg[0]); err != nil {
+					// this is not the best thing to do
+					panic(err)
+				}
 				return nil
 			} else {
 				return cmd.Help()
@@ -32,19 +31,19 @@ func main() {
 		},
 	}
 
-	msg := "Same as the page's title"
-	rootCmd.Flags().StringVarP(&args.outputEpub, "output", "O", msg, "Name of output epub file")
-	rootCmd.Flags().UintVarP(&args.depth, "depth", "d", 1, "Maximum recursion")
+	rootCmd.Flags().StringVarP(&args.Output, "output", "O", "", "Name of output epub file (Same as the page's title)")
+
+	rootCmd.Flags().Uint8VarP(&args.Depth, "depth", "d", 0, "Maximum recursion")
 
 	// Copied from monolith => Maybe reorder it a bit
 	// Exclusion flags for various elements
-	rootCmd.Flags().BoolP("no-js", "j", false, "Remove JavaScript")
-	rootCmd.Flags().BoolP("no-css", "c", false, "Remove CSS")
-	rootCmd.Flags().BoolP("no-images", "i", false, "Remove images")
-	rootCmd.Flags().BoolP("no-fonts", "f", false, "Remove fonts")
-	rootCmd.Flags().BoolP("no-audio", "a", false, "Remove audio sources")
-	rootCmd.Flags().BoolP("no-video", "v", false, "Remove video sources")
-	rootCmd.Flags().BoolP("no-metadata", "m", false, "Exclude timestamp and source information")
+	rootCmd.Flags().BoolVarP(&args.Js, "no-js", "j", false, "Remove JavaScript")
+	rootCmd.Flags().BoolVarP(&args.Css, "no-css", "c", false, "Remove CSS")
+	rootCmd.Flags().BoolVarP(&args.Images, "no-images", "i", false, "Remove images")
+	rootCmd.Flags().BoolVarP(&args.Fonts, "no-fonts", "f", false, "Remove fonts")
+	rootCmd.Flags().BoolVarP(&args.Audio, "no-audio", "a", false, "Remove audio sources")
+	rootCmd.Flags().BoolVarP(&args.Video, "no-video", "V", false, "Remove video sources")
+	rootCmd.Flags().BoolVarP(&args.Metadata, "no-metadata", "m", false, "Exclude timestamp and source information")
 	//TODO: Check if this is possible in EPUB
 	// rootCmd.Flags().BoolP("no-frames", "F", false, "Remove frames and iframes")
 
@@ -57,13 +56,17 @@ func main() {
 	// Remaing flags from monolith
 	// rootCmd.Flags().BoolP("base-url" <http://localhost/> "b",   "Set custom base URL")
 	// rootCmd.Flags().BoolP("user-agent",           "u",   "Set custom User-Agent string")
-	rootCmd.Flags().StringP("cookies", "C", "", "Specify cookie file")
-	rootCmd.Flags().StringArrayP("allow-domain", "A", []string{}, "Specify domains to use for white/black-listing")
-	rootCmd.Flags().StringArrayP("block-domains", "D", []string{}, "Treat list of specified domains as blacklist")
-	rootCmd.Flags().DurationP("timeout", "T", 60*time.Second, "Adjust network request timeout")
+	var allow, block []string
+	allow = *rootCmd.Flags().StringArrayP("allow-domain", "A", []string{}, "Specify domains to use for white/black-listing")
+	args.AddAllowDomain(allow)
+	block = *rootCmd.Flags().StringArrayP("block-domains", "D", []string{}, "Treat list of specified domains as blacklist")
+	args.AddBlockDomain(block)
+
+	rootCmd.Flags().StringVarP(&args.Cookie, "cookies", "C", "", "Specify cookie file")
+	rootCmd.Flags().DurationVarP(&args.Timeout, "timeout", "T", 60*time.Second, "Adjust network request timeout")
 
 	rootCmd.Flags().BoolP("silent", "s", false, "Suppress verbosity")
-	rootCmd.Flags().BoolP("version", "V", false, "Print version information")
+	rootCmd.Flags().BoolP("version", "v", false, "Print version information")
 
 	rootCmd.Flags().SortFlags = false
 
