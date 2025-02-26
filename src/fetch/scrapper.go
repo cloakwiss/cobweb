@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/cloakwiss/cobweb/app"
 	"github.com/gocolly/colly"
 )
 
@@ -21,7 +22,7 @@ var header = map[string][]string{
 
 // This is supposed to find all path in the page with some limit on recursion
 // TODO: added some headers and caching also make the URL filter smarter
-func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
+func Mainloop(target string, recurse_limit uint8, out chan<- app.Msg) map[url.URL][]byte {
 	targetUrl, err := url.Parse(target)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
 	if err != nil {
@@ -46,6 +47,10 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 
 	collector.OnRequest(func(r *colly.Request) {
 		r.Headers = (*http.Header)(&header)
+		out <- app.Msg{
+			Code:    app.VisitingPage,
+			Payload: r.URL.String(),
+		}
 		// fmt.Println("Visiting", r.URL.String())
 	})
 
@@ -53,6 +58,10 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 
 	collector.OnResponse(func(res *colly.Response) {
 		pagesContents[*res.Request.URL] = res.Body
+		out <- app.Msg{
+			Code:    app.OnPage,
+			Payload: res.Request.URL.String(),
+		}
 		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
@@ -84,10 +93,12 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 	collector.OnScraped(func(r *colly.Response) {
 	})
 
+	println("Started the scrapper")
 	collector.Visit(target)
 
 	//-------------------------------------------------------
 
+	defer close(out)
 	return pagesContents
 }
 
