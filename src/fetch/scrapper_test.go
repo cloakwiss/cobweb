@@ -11,8 +11,11 @@ import (
 const target = "http://localhost:8080/std/index.html"
 
 func Test_Mainloop(t *testing.T) {
-	pages := fetch.Mainloop(target, 1)
-	for key := range pages {
-		fmt.Printf("Page: %s\n", key.String())
-	}
+	// pages := fetch.Mainloop(target, 1)
+	// for key := range pages {
+	// 	fmt.Printf("Page: %s\n", key.String())
+	// }
+
+	size := fetch.ScrapeSize(target, 1)
+	fmt.Printf("total size: %d \n", size)
 }
