@@ -1,6 +1,8 @@
 package app
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type MsgCode uint8
 
@@ -9,12 +11,12 @@ const (
 	OnPage
 )
 
-type Msg struct {
+type ApMsg struct {
 	Code    MsgCode
 	Payload string
 }
 
-func (m Msg) String() (out string) {
+func (m ApMsg) String() (out string) {
 	switch m.Code {
 	case VisitingPage:
 		out = fmt.Sprintf("Visiting Page: %s", m.Payload)
@@ -22,17 +24,4 @@ func (m Msg) String() (out string) {
 		out = fmt.Sprintf("On Page: %s", m.Payload)
 	}
 	return
-}
-
-func Print(input <-chan Msg) {
-	// for {
-	// 	inp, open := <-input
-	// 	println(inp.String())
-	// 	if !open {
-	// 		break
-	// 	}
-	// }
-	for msg := range input {
-		println(msg.String())
-	}
 }

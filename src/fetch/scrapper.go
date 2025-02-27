@@ -22,13 +22,13 @@ var header = map[string][]string{
 
 // This is supposed to find all path in the page with some limit on recursion
 // TODO: added some headers and caching also make the URL filter smarter
-func Mainloop(target string, recurse_limit uint8, out chan<- app.Msg) map[url.URL][]byte {
+func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.URL][]byte {
 	targetUrl, err := url.Parse(target)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
 	if err != nil {
 		return pagesContents
 	}
-	println("Domain Name: ", removeProtocolPrefix(targetUrl))
+	// println("Domain Name: ", removeProtocolPrefix(targetUrl))
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
@@ -47,7 +47,7 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.Msg) map[url.UR
 
 	collector.OnRequest(func(r *colly.Request) {
 		r.Headers = (*http.Header)(&header)
-		out <- app.Msg{
+		out <- app.ApMsg{
 			Code:    app.VisitingPage,
 			Payload: r.URL.String(),
 		}
@@ -58,7 +58,7 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.Msg) map[url.UR
 
 	collector.OnResponse(func(res *colly.Response) {
 		pagesContents[*res.Request.URL] = res.Body
-		out <- app.Msg{
+		out <- app.ApMsg{
 			Code:    app.OnPage,
 			Payload: res.Request.URL.String(),
 		}
@@ -93,7 +93,7 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.Msg) map[url.UR
 	collector.OnScraped(func(r *colly.Response) {
 	})
 
-	println("Started the scrapper")
+	// println("Started the scrapper")
 	collector.Visit(target)
 
 	//-------------------------------------------------------
