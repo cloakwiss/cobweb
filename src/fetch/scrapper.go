@@ -21,12 +21,9 @@ var header = map[string][]string{
 	},
 }
 
-// This is the function that will be start the crawling and scrapping
-// func Start(inchan chan int, outchan chan int) {}
-
 // This is supposed to find all path in the page with some limit on recursion
 // TODO: added some headers and caching also make the URL filter smarter
-func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.URL][]byte {
+func Scrapper(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.URL][]byte {
 	targetUrl, err := url.Parse(target)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
 	if err != nil {
@@ -52,8 +49,8 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 	collector.OnRequest(func(r *colly.Request) {
 		r.Headers = (*http.Header)(&header)
 		out <- app.ApMsg{
-			Code:    app.VisitingPage,
-			Payload: r.URL.String(),
+			Code: app.VisitingPage,
+			URL:  r.URL.String(),
 		}
 		// fmt.Println("Visiting", r.URL.String())
 	})
@@ -63,8 +60,8 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 	collector.OnResponse(func(res *colly.Response) {
 		pagesContents[*res.Request.URL] = res.Body
 		out <- app.ApMsg{
-			Code:    app.OnPage,
-			Payload: res.Request.URL.String(),
+			Code: app.OnPage,
+			URL:  res.Request.URL.String(),
 		}
 		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
@@ -105,6 +102,7 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 	return pagesContents
 }
 
+// Stick to url struct as much as possible
 func removeProtocolPrefix(url *url.URL) string {
 	var hostname string
 	if url.Port() == "" {

@@ -21,7 +21,7 @@ func Test_Mainloop(t *testing.T) {
 	// go app.Print(iChan)
 
 	go func() {
-		pages := fetch.Mainloop(target, 1, iChan)
+		pages := fetch.Scrapper(target, 1, iChan)
 		npages := make(map[string][]byte)
 		for key, val := range pages {
 			// fmt.Printf("Page: %s\n", key.String())
