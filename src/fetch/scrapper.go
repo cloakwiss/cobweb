@@ -12,9 +12,13 @@ import (
 var header = map[string][]string{
 	// Obtained from Firefox Browser
 	"Accept-Encoding": {"gzip", "deflate", "br", "zstd"},
-	"Accept":          {"text/html", "application/xhtml+xml", "application/xml;q=0.9,*/*;q=0.8"},
-	// Obtained from Brave Browser
-	"User-Agent": {"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36"},
+	"Accept":          {"text/html"},
+	"User-Agent": {
+		// Obtained from Brave Browser
+		"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36",
+		// Obtained from Firefox Browser
+		"Mozilla/5.0 (X11; Linux x86_64; rv:135.0) Gecko/20100101 Firefox/135.0",
+	},
 }
 
 // This is the function that will be start the crawling and scrapping
@@ -90,8 +94,7 @@ func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 		collector.OnHTML("iframe[src]", htmlHandler)
 	}
 
-	collector.OnScraped(func(r *colly.Response) {
-	})
+	collector.OnScraped(func(r *colly.Response) {})
 
 	// println("Started the scrapper")
 	collector.Visit(target)
