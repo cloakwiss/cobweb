@@ -1,11 +1,11 @@
 package fetch
 
 import (
-	"fmt"
 	"net/http"
 	"net/url"
 	"strings"
 
+	"github.com/cloakwiss/cobweb/app"
 	"github.com/gocolly/colly"
 )
 
@@ -22,16 +22,16 @@ var header = map[string][]string{
 
 // This is supposed to find all path in the page with some limit on recursion
 // TODO: added some headers and caching also make the URL filter smarter
-func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
+func Mainloop(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.URL][]byte {
 	targetUrl, err := url.Parse(target)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
 	if err != nil {
 		return pagesContents
 	}
-	println("Domain Name: ", removeProtocolPrefix(targetUrl))
+	// println("Domain Name: ", removeProtocolPrefix(targetUrl))
 
 	// recurse limit is unused
-	c := colly.NewCollector(
+	collector := colly.NewCollector(
 		colly.AllowedDomains(removeProtocolPrefix(targetUrl)),
 		colly.MaxDepth(int(recurse_limit)+1),
 	)
@@ -45,16 +45,24 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 	// https://go-colly.org/docs/introduction/start/ read this
 	//-------------------------------------------------------
 
-	c.OnRequest(func(r *colly.Request) {
+	collector.OnRequest(func(r *colly.Request) {
 		r.Headers = (*http.Header)(&header)
-		fmt.Println("Visiting", r.URL.String())
+		out <- app.ApMsg{
+			Code:    app.VisitingPage,
+			Payload: r.URL.String(),
+		}
+		// fmt.Println("Visiting", r.URL.String())
 	})
 
-	c.OnError(func(r *colly.Response, err error) {})
+	collector.OnError(func(r *colly.Response, err error) {})
 
-	c.OnResponse(func(res *colly.Response) {
+	collector.OnResponse(func(res *colly.Response) {
 		pagesContents[*res.Request.URL] = res.Body
-		fmt.Printf("On page: %v\n", res.Request.URL)
+		out <- app.ApMsg{
+			Code:    app.OnPage,
+			Payload: res.Request.URL.String(),
+		}
+		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
 	// Need to add others too
@@ -64,23 +72,33 @@ func Mainloop(target string, recurse_limit uint8) map[url.URL][]byte {
 			e.Request.Visit(link)
 		}
 
-		// Anchor will not be the only tag used to link to other pages
-		c.OnHTML("a[href]", htmlHandler)
-		// will look for other assets
-		c.OnHTML("link[href]", htmlHandler)
+		//TODO: verify if this is all
+		collector.OnHTML("a[href]", htmlHandler)
+		collector.OnHTML("link[href]", htmlHandler)
+		collector.OnHTML("base[href]", htmlHandler)
+		collector.OnHTML("area[href]", htmlHandler)
+		collector.OnHTML("data[object]", htmlHandler)
+		collector.OnHTML("del[cite]", htmlHandler)
+		collector.OnHTML("ins[cite]", htmlHandler)
+		collector.OnHTML("blockquote[cite]", htmlHandler)
+		collector.OnHTML("q[cite]", htmlHandler)
+		collector.OnHTML("img[src]", htmlHandler)
+		collector.OnHTML("track[src]", htmlHandler)
+		collector.OnHTML("embed[src]", htmlHandler)
+		collector.OnHTML("source[src]", htmlHandler)
+		collector.OnHTML("script[src]", htmlHandler)
+		collector.OnHTML("iframe[src]", htmlHandler)
 	}
 
-	c.OnScraped(func(r *colly.Response) {
+	collector.OnScraped(func(r *colly.Response) {
 	})
 
-	c.Visit(target)
+	// println("Started the scrapper")
+	collector.Visit(target)
 
 	//-------------------------------------------------------
 
-	for key := range pagesContents {
-		fmt.Printf("Page: %s\n", key.String())
-	}
-
+	defer close(out)
 	return pagesContents
 }
 
