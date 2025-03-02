@@ -68,27 +68,33 @@ func Scrapper(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 
 	// Need to add others too
 	{
-		htmlHandler := func(e *colly.HTMLElement) {
-			link := e.Attr("href")
-			e.Request.Visit(link)
+		// TODO: need to find out how can I apply the filter in this function for various resources
+		htmlHandler := func(tag string) colly.HTMLCallback {
+			return func(e *colly.HTMLElement) {
+				link := e.Attr(tag)
+				e.Request.Visit(link)
+			}
 		}
 
-		//TODO: verify if this is all
-		collector.OnHTML("a[href]", htmlHandler)
-		collector.OnHTML("link[href]", htmlHandler)
-		collector.OnHTML("base[href]", htmlHandler)
-		collector.OnHTML("area[href]", htmlHandler)
-		collector.OnHTML("data[object]", htmlHandler)
-		collector.OnHTML("del[cite]", htmlHandler)
-		collector.OnHTML("ins[cite]", htmlHandler)
-		collector.OnHTML("blockquote[cite]", htmlHandler)
-		collector.OnHTML("q[cite]", htmlHandler)
-		collector.OnHTML("img[src]", htmlHandler)
-		collector.OnHTML("track[src]", htmlHandler)
-		collector.OnHTML("embed[src]", htmlHandler)
-		collector.OnHTML("source[src]", htmlHandler)
-		collector.OnHTML("script[src]", htmlHandler)
-		collector.OnHTML("iframe[src]", htmlHandler)
+		// TODO: verify if this is all
+		collector.OnHTML("a[href]", htmlHandler("href"))
+		collector.OnHTML("link[href]", htmlHandler("href"))
+		collector.OnHTML("base[href]", htmlHandler("href"))
+		collector.OnHTML("area[href]", htmlHandler("href"))
+
+		collector.OnHTML("data[object]", htmlHandler("object"))
+
+		collector.OnHTML("del[cite]", htmlHandler("cite"))
+		collector.OnHTML("ins[cite]", htmlHandler("cite"))
+		collector.OnHTML("blockquote[cite]", htmlHandler("cite"))
+		collector.OnHTML("q[cite]", htmlHandler("cite"))
+
+		collector.OnHTML("img[src]", htmlHandler("src"))
+		collector.OnHTML("track[src]", htmlHandler("src"))
+		collector.OnHTML("embed[src]", htmlHandler("src"))
+		collector.OnHTML("source[src]", htmlHandler("src"))
+		collector.OnHTML("script[src]", htmlHandler("src"))
+		collector.OnHTML("iframe[src]", htmlHandler("src"))
 	}
 
 	collector.OnScraped(func(r *colly.Response) {})
