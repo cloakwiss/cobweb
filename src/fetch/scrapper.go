@@ -9,6 +9,8 @@ import (
 	"github.com/gocolly/colly"
 )
 
+// These are header collected from some pages have not figured out how to use it effectively
+// Ideally these should not be required
 var header = map[string][]string{
 	// Obtained from Firefox Browser
 	"Accept-Encoding": {"gzip", "deflate", "br", "zstd"},
@@ -21,10 +23,20 @@ var header = map[string][]string{
 	},
 }
 
-// This is supposed to find all path in the page with some limit on recursion
-// TODO: added some headers and caching also make the URL filter smarter
-func Scrapper(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.URL][]byte {
-	targetUrl, err := url.Parse(target)
+// This function should be called for all the target URL seprately
+// or we need to find out if we can safely merge the graph of page
+// discovered without redoing the work.
+//
+// For example if the urls are pointing to same domain but are of different
+// path then we can share the downloaded result to some extend atleast.
+//
+//	And if that is the case then the index (of the book) generation will also need to change
+//
+// TODO: added some headers, caching and URL filter smarter
+// TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
+func Scrapper(target string, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
+	defer close(out)
+	_, err := url.Parse(target)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
 	if err != nil {
 		return pagesContents
@@ -33,11 +45,14 @@ func Scrapper(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
-		colly.AllowedDomains(removeProtocolPrefix(targetUrl)),
-		colly.MaxDepth(int(recurse_limit)+1),
+		colly.AllowedDomains(stringOfURL(argu.AllowDomains)...),
+		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
+		colly.MaxDepth(int(argu.Depth)+1),
+		// Need to measure the difference in performance (using some older version)
+		colly.Async(true),
 	)
 
-	//TODO: Need to add a delay too
+	//TODO: Need to add a delay too and expose as flag to cli
 	// c.Limit(&colly.LimitRule{
 	// 	Delay: time.Second,
 	// })
@@ -47,7 +62,7 @@ func Scrapper(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 	//-------------------------------------------------------
 
 	collector.OnRequest(func(r *colly.Request) {
-		r.Headers = (*http.Header)(&header)
+		// r.Headers = (*http.Header)(&header)
 		out <- app.ApMsg{
 			Code: app.VisitingPage,
 			URL:  r.URL.String(),
@@ -103,8 +118,6 @@ func Scrapper(target string, recurse_limit uint8, out chan<- app.ApMsg) map[url.
 	collector.Visit(target)
 
 	//-------------------------------------------------------
-
-	defer close(out)
 	return pagesContents
 }
 
@@ -117,4 +130,19 @@ func removeProtocolPrefix(url *url.URL) string {
 		hostname = url.Hostname() + ":" + url.Port()
 	}
 	return strings.TrimLeft(hostname, "www.")
+}
+
+// WARN: this cannot handle paths at the moment
+// TODO: what should the behaviour of this in case the it has a username in the url
+func stringOfURL(urls []url.URL) []string {
+	parsed := make([]string, 0, len(urls))
+	for _, u := range urls {
+		// u.String()
+		if u.Scheme == "http" || u.Scheme == "https" {
+			//WARN: This url's port is stripped here
+			ur := u.Hostname()
+			parsed = append(parsed, ur)
+		}
+	}
+	return parsed
 }

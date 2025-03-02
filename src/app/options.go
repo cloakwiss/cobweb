@@ -19,7 +19,7 @@ const (
 type Options struct {
 	// exclude the following or not
 	Audio, Css, Iframe, Fonts, Js, Images, Video, Metadata bool
-	InputURLs, AllowDomains, BlockDomains                  []url.URL
+	Targets, AllowDomains, BlockDomains                    []url.URL
 	Output, Cookie                                         string
 	Depth                                                  uint8
 	Mode                                                   Mode
@@ -58,7 +58,7 @@ func Args() Options {
 		Args:          cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, arg []string) error {
 			if len(arg) == 1 {
-				if err := addURL(arg[0], args.InputURLs); err != nil {
+				if err := addURL(arg[0], args.Targets); err != nil {
 					// this is not the best thing to do
 					panic(err)
 				}
