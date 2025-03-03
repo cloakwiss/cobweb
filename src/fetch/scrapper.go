@@ -1,7 +1,6 @@
 package fetch
 
 import (
-	"net/http"
 	"net/url"
 	"strings"
 
@@ -34,13 +33,9 @@ var header = map[string][]string{
 //
 // TODO: added some headers, caching and URL filter smarter
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
-func Scrapper(target string, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
+func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
 	defer close(out)
-	_, err := url.Parse(target)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
-	if err != nil {
-		return pagesContents
-	}
 	// println("Domain Name: ", removeProtocolPrefix(targetUrl))
 
 	// recurse limit is unused
