@@ -1,6 +1,7 @@
 package fetch
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -34,9 +35,10 @@ var header = map[string][]string{
 // TODO: added some headers, caching and URL filter smarter
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
 func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
-	defer close(out)
+	// defer close(out)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
-	// println("Domain Name: ", removeProtocolPrefix(targetUrl))
+	println("Domain Name: ", target.String())
+	println("Depth: ", argu.Depth)
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
@@ -44,7 +46,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
 		// Need to measure the difference in performance (using some older version)
-		colly.Async(true),
+		// colly.Async(true),
 	)
 
 	//TODO: Need to add a delay too and expose as flag to cli
@@ -58,22 +60,22 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		out <- app.ApMsg{
-			Code: app.VisitingPage,
-			URL:  r.URL.String(),
-		}
-		// fmt.Println("Visiting", r.URL.String())
+		// out <- app.ApMsg{
+		// 	Code: app.VisitingPage,
+		// 	URL:  r.URL.String(),
+		// }
+		fmt.Println("Visiting", r.URL.String())
 	})
 
 	collector.OnError(func(r *colly.Response, err error) {})
 
 	collector.OnResponse(func(res *colly.Response) {
 		pagesContents[*res.Request.URL] = res.Body
-		out <- app.ApMsg{
-			Code: app.OnPage,
-			URL:  res.Request.URL.String(),
-		}
-		// fmt.Printf("On page: %v\n", res.Request.URL)
+		// out <- app.ApMsg{
+		// 	Code: app.OnPage,
+		// 	URL:  res.Request.URL.String(),
+		// }
+		fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
 	// Need to add others too
@@ -109,8 +111,8 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 	collector.OnScraped(func(r *colly.Response) {})
 
-	// println("Started the scrapper")
-	collector.Visit(target)
+	println("Started the scrapper")
+	collector.Visit(target.String())
 
 	//-------------------------------------------------------
 	return pagesContents

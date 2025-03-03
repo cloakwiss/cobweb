@@ -26,24 +26,18 @@ type Options struct {
 	Timeout                                                time.Duration
 }
 
-func addURL(raw string, to []url.URL) error {
-	u, err := url.Parse(raw)
-	if err != nil {
-		return err
-	}
-	to = append(to, *u)
-	return nil
-}
-
-func addURLs(raw []string, to []url.URL) error {
+func addURLs(raw []string) []url.URL {
+	// log.Printf("Input: %+v", *to)
+	// defer log.Printf("Output: %+v", *to)
+	parsed := make([]url.URL, 0, len(raw))
 	for _, ur := range raw {
 		u, err := url.Parse(ur)
 		if err != nil {
-			return err
+			return nil
 		}
-		to = append(to, *u)
+		parsed = append(parsed, *u)
 	}
-	return nil
+	return parsed
 }
 
 func Args() Options {
@@ -57,9 +51,15 @@ func Args() Options {
 		SilenceUsage:  false,
 		Args:          cobra.MaximumNArgs(1),
 		RunE: func(cmd *cobra.Command, arg []string) error {
-			if len(arg) == 1 {
-				if err := addURL(arg[0], args.Targets); err != nil {
-					// this is not the best thing to do
+			// fmt.Printf("%+v\n", arg)
+			// println("Arg: ", len(arg))
+			if len(arg) >= 1 {
+				// log.Println("Entered")
+				ur, err := url.Parse(arg[0])
+				// fmt.Printf("Parsed: %+v\n", ur)
+				if err == nil {
+					args.Targets = append(args.Targets, *ur)
+				} else {
 					panic(err)
 				}
 				return nil
@@ -69,18 +69,18 @@ func Args() Options {
 		},
 	}
 
-	args.Output = *rootCmd.Flags().StringP("output", "O", "", "Name of output epub file (Same as the page's title)")
-	args.Depth = *rootCmd.Flags().Uint8P("depth", "d", 0, "Maximum recursion")
+	rootCmd.Flags().StringVarP(&args.Output, "output", "O", "", "Name of output epub file (Same as the page's title)")
+	rootCmd.Flags().Uint8VarP(&args.Depth, "depth", "d", 0, "Maximum recursion")
 
 	// Copied from monolith => Maybe reorder it a bit
 	// Exclusion flags for various elements
-	args.Js = *rootCmd.Flags().BoolP("no-js", "j", false, "Remove JavaScript")
-	args.Css = *rootCmd.Flags().BoolP("no-css", "c", false, "Remove CSS")
-	args.Images = *rootCmd.Flags().BoolP("no-images", "i", false, "Remove images")
-	args.Fonts = *rootCmd.Flags().BoolP("no-fonts", "f", false, "Remove fonts")
-	args.Audio = *rootCmd.Flags().BoolP("no-audio", "a", false, "Remove audio sources")
-	args.Video = *rootCmd.Flags().BoolP("no-video", "V", false, "Remove video sources")
-	args.Metadata = *rootCmd.Flags().BoolP("no-metadata", "m", false, "Exclude timestamp and source information")
+	rootCmd.Flags().BoolVarP(&args.Js, "no-js", "j", false, "Remove JavaScript")
+	rootCmd.Flags().BoolVarP(&args.Css, "no-css", "c", false, "Remove CSS")
+	rootCmd.Flags().BoolVarP(&args.Images, "no-images", "i", false, "Remove images")
+	rootCmd.Flags().BoolVarP(&args.Fonts, "no-fonts", "f", false, "Remove fonts")
+	rootCmd.Flags().BoolVarP(&args.Audio, "no-audio", "a", false, "Remove audio sources")
+	rootCmd.Flags().BoolVarP(&args.Video, "no-video", "V", false, "Remove video sources")
+	rootCmd.Flags().BoolVarP(&args.Metadata, "no-metadata", "m", false, "Exclude timestamp and source information")
 	//TODO: Check if this is possible in EPUB
 	// rootCmd.Flags().BoolP("no-frames", "F", false, "Remove frames and iframes")
 
@@ -93,11 +93,17 @@ func Args() Options {
 	// Remaing flags from monolith
 	// rootCmd.Flags().BoolP("base-url" <http://localhost/> "b",   "Set custom base URL")
 	// rootCmd.Flags().BoolP("user-agent",           "u",   "Set custom User-Agent string")
-	var allow, block []string
-	allow = *rootCmd.Flags().StringArrayP("allow-domain", "A", []string{}, "Specify domains to use for white/black-listing")
-	addURLs(allow, args.AllowDomains)
-	block = *rootCmd.Flags().StringArrayP("block-domains", "D", []string{}, "Treat list of specified domains as blacklist")
-	addURLs(block, args.AllowDomains)
+	allow := rootCmd.Flags().StringArrayP("allow-domain", "A", []string{}, "Specify domains to use for white/black-listing")
+	// if err := addURLs(allow, &args.AllowDomains); err != nil {
+	// 	panic("Allow Domain addition failed")
+	// }
+	if ans := addURLs(*allow); ans != nil {
+		args.AllowDomains = ans
+	}
+	block := rootCmd.Flags().StringArrayP("block-domains", "D", []string{}, "Treat list of specified domains as blacklist")
+	if ans := addURLs(*block); ans != nil {
+		args.BlockDomains = ans
+	}
 
 	rootCmd.Flags().StringVarP(&args.Cookie, "cookies", "C", "", "Specify cookie file")
 	rootCmd.Flags().DurationVarP(&args.Timeout, "timeout", "T", 60*time.Second, "Adjust network request timeout")
