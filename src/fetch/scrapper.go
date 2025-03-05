@@ -175,6 +175,19 @@ func assetFilterByExtension(opts app.Options) func(string) bool {
 	}
 }
 
+func assetFilterByHeader(opts app.Options) {
+	if opts.NoCss {
+	}
+	if opts.NoJs {
+	}
+	if opts.NoFonts {
+		// This will make thing very dicey
+	}
+	if opts.NoImages {
+	}
+
+}
+
 // Stick to url struct as much as possible
 func removeProtocolPrefix(url *url.URL) string {
 	var hostname string
