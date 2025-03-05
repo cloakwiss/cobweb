@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"net/url"
-	"regexp"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/app"
@@ -80,10 +79,18 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 	// Need to add others too
 	{
 		// TODO: need to find out how can I apply the filter in this function for various resources
+		// There will be 2 layers of filtering:
+		// 1. Will be based on extension of file based on URI
+		// 2. Will be based on http header `Content-Type`
+		//
+		// Type 1 will be implemented here
 		htmlHandler := func(tag string) colly.HTMLCallback {
+			shouldAllow := assetFilterByExtension(argu)
 			return func(e *colly.HTMLElement) {
 				link := e.Attr(tag)
-				e.Request.Visit(link)
+				if shouldAllow(link) {
+					e.Request.Visit(link)
+				}
 			}
 		}
 
@@ -95,6 +102,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 		collector.OnHTML("data[object]", htmlHandler("object"))
 
+		// Need to see usage of these tags in the wild
 		collector.OnHTML("del[cite]", htmlHandler("cite"))
 		collector.OnHTML("ins[cite]", htmlHandler("cite"))
 		collector.OnHTML("blockquote[cite]", htmlHandler("cite"))
@@ -121,6 +129,50 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 	//-------------------------------------------------------
 	return pagesContents
+}
+
+// This function will produce the pattern to match for html handler
+// based on arguments given, this is desgined to be called once only
+//
+// The assets that matches the patter will be excluded
+func assetFilterByExtension(opts app.Options) func(string) bool {
+	parts := make([]string, 0, 7)
+	if opts.NoCss {
+		parts = append(parts, ".css")
+	}
+	if opts.NoJs {
+		parts = append(parts, ".js")
+	}
+	if opts.NoFonts {
+		parts = append(parts, ".woff2")
+		parts = append(parts, ".woff")
+		parts = append(parts, ".otf")
+		parts = append(parts, ".ttf")
+		// This will make thing very dicey
+		parts = append(parts, ".svg")
+	}
+	if opts.NoImages {
+		parts = append(parts, ".png")
+		parts = append(parts, ".jpeg")
+		parts = append(parts, ".gif")
+		parts = append(parts, ".webp")
+		parts = append(parts, ".svg")
+	}
+	// Is it feasible to enumerate all the file formats here
+	// if opts.Audio { }
+	// if opts.Video { }
+
+	// This will need some thing special and maybe should be covered with
+	// another function but
+	// if opts.Iframe { }
+	return func(uri string) bool {
+		for _, ext := range parts {
+			if strings.HasSuffix(uri, ext) {
+				return false
+			}
+		}
+		return true
+	}
 }
 
 // Stick to url struct as much as possible
