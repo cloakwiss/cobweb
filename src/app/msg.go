@@ -9,6 +9,7 @@ type MsgCode uint8
 const (
 	VisitingPage MsgCode = iota
 	OnPage
+	OnScraped
 )
 
 type ApMsg struct {
@@ -22,6 +23,9 @@ func (m ApMsg) String() (out string) {
 		out = fmt.Sprintf("Visiting Page: %s", m.URL)
 	case OnPage:
 		out = fmt.Sprintf("On Page: %s", m.URL)
+	case OnScraped:
+		out = fmt.Sprintf("On Scraped: %s", m.URL)
+
 	}
 	return
 }

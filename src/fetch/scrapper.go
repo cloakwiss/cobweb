@@ -1,8 +1,8 @@
 package fetch
 
 import (
-	"fmt"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/app"
@@ -35,10 +35,10 @@ var header = map[string][]string{
 // TODO: added some headers, caching and URL filter smarter
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
 func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
-	// defer close(out)
+	defer close(out)
 	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
-	println("Domain Name: ", target.String())
-	println("Depth: ", argu.Depth)
+	// println("Domain Name: ", target.String())
+	// println("Depth: ", argu.Depth)
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
@@ -60,22 +60,21 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		// out <- app.ApMsg{
-		// 	Code: app.VisitingPage,
-		// 	URL:  r.URL.String(),
-		// }
-		fmt.Println("Visiting", r.URL.String())
+		out <- app.ApMsg{
+			Code: app.VisitingPage,
+			URL:  r.URL.String(),
+		}
+		// fmt.Println("Visiting", r.URL.String())
 	})
 
 	collector.OnError(func(r *colly.Response, err error) {})
 
 	collector.OnResponse(func(res *colly.Response) {
-		pagesContents[*res.Request.URL] = res.Body
-		// out <- app.ApMsg{
-		// 	Code: app.OnPage,
-		// 	URL:  res.Request.URL.String(),
-		// }
-		fmt.Printf("On page: %v\n", res.Request.URL)
+		out <- app.ApMsg{
+			Code: app.OnPage,
+			URL:  res.Request.URL.String(),
+		}
+		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
 	// Need to add others too
@@ -109,9 +108,15 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 		collector.OnHTML("iframe[src]", htmlHandler("src"))
 	}
 
-	collector.OnScraped(func(r *colly.Response) {})
+	collector.OnScraped(func(r *colly.Response) {
+		pagesContents[*r.Request.URL] = r.Body
+		out <- app.ApMsg{
+			Code: app.OnScraped,
+			URL:  r.Request.URL.String(),
+		}
+	})
 
-	println("Started the scrapper")
+	// println("Started the scrapper")
 	collector.Visit(target.String())
 
 	//-------------------------------------------------------

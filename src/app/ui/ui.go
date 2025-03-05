@@ -79,6 +79,5 @@ var (
 func (u UiState) View() (out string) {
 	out = u.spinnner.View()
 	out += "  "
-	out += u.buf[u.count%2]
 	return
 }
