@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 
 	tea "github.com/charmbracelet/bubbletea"
 
@@ -29,7 +30,8 @@ func main() {
 		for key, val := range pages {
 			// fmt.Printf("Page: %s\n", key.String())
 			// Pay attention to the extra `/` at the start of path
-			npages[key.Path] = val
+			stripped := strings.TrimLeft(key.Path, "/")
+			npages[stripped] = val.Data
 		}
 		zip.WriteTozip(npages, args.Output+".zip")
 	}()

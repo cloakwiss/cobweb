@@ -8,6 +8,7 @@ import (
 )
 
 // The order of pages is important, so make it array instead of map later
+// TODO: add proper date of creation to every file
 func WriteTozip(pages map[string][]byte, outputZipFile string) {
 	// Create a buffer to write our archive to.
 	buf := new(bytes.Buffer)

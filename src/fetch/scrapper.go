@@ -8,6 +8,19 @@ import (
 	"github.com/gocolly/colly"
 )
 
+type PageTable map[url.URL]Page
+
+type Page struct {
+	Data []byte
+	Metadata
+}
+
+type Metadata struct {
+	// TODO: make this enum later
+	MediaType string
+	Title     string
+}
+
 // These are header collected from some pages have not figured out how to use it effectively
 // Ideally these should not be required
 var header = map[string][]string{
@@ -33,9 +46,9 @@ var header = map[string][]string{
 //
 // TODO: added some headers, caching and URL filter smarter
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
-func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
+func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable {
 	defer close(out)
-	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
+	pagesContents := make(PageTable)
 	// println("Domain Name: ", target.String())
 	// println("Depth: ", argu.Depth)
 
@@ -68,6 +81,12 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 	collector.OnError(func(r *colly.Response, err error) {})
 
+	// If my understanding is right then OnResponse is called when the Response is received
+	// and if it is HTML then `OnHTML` is also called followed by `OnScraped` otherwise
+	// `OnScraped` is called directly.
+	// FIND: So, What does `OnScraped` allows to do which `OnResponse` cannot ?
+	// I cannot find the much in docs and even they were not using `OnResponse` & `OnScraped`
+	// in tandem as I am planning to do
 	collector.OnResponse(func(res *colly.Response) {
 		out <- app.ApMsg{
 			Code: app.OnPage,
@@ -117,7 +136,15 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 	}
 
 	collector.OnScraped(func(r *colly.Response) {
-		pagesContents[*r.Request.URL] = r.Body
+		pagesContents[*r.Request.URL] = Page{
+			Data: r.Body,
+			// Assign this properly
+			Metadata: Metadata{
+				// Title is only possible for HTML so what should be title other things
+				Title:     "",
+				MediaType: r.Headers.Get("Conten-Type"),
+			},
+		}
 		out <- app.ApMsg{
 			Code: app.OnScraped,
 			URL:  r.Request.URL.String(),
