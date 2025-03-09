@@ -57,16 +57,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		colly.AllowedDomains(stringOfURL(argu.AllowDomains)...),
 		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
-		// Need to measure the difference in performance (using some older version)
-		// TODO: first thing first how to use this, where to wait
-		// and where to call close for channel
-		// colly.Async(true),
 	)
-
-	//TODO: Need to add a delay too and expose as flag to cli
-	// c.Limit(&colly.LimitRule{
-	// 	Delay: time.Second,
-	// })
 
 	//TODO: do not change the order of these callback methods
 	// https://go-colly.org/docs/introduction/start/ read this
