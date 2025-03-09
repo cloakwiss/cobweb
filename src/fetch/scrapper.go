@@ -62,11 +62,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		// and where to call close for channel
 		// colly.Async(true),
 	)
-
-	//TODO: Need to add a delay too and expose as flag to cli
-	// c.Limit(&colly.LimitRule{
-	// 	Delay: time.Second,
-	// })
+	// collector.Limit(&colly.LimitRule{DomainGlob: "*", Parallelism: 2})
 
 	//TODO: do not change the order of these callback methods
 	// https://go-colly.org/docs/introduction/start/ read this
@@ -159,6 +155,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 
 	// println("Started the scrapper")
 	collector.Visit(target.String())
+	// collector.Wait()
 
 	//-------------------------------------------------------
 	return pagesContents

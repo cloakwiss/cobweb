@@ -22,11 +22,12 @@ func getMsg(input <-chan app.ApMsg) tea.Cmd {
 		case msg, ok := <-input:
 			if ok {
 				return msg
+			} else {
+				return done{}
 			}
 		case <-time.After(time.Millisecond * 16):
 			return nothing{}
 		}
-		return done{}
 	}
 }
 
@@ -58,8 +59,6 @@ func (u UiState) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		u.buf[u.count%2] = msg.String()
 		cmd = tea.Printf("%s  %s", checkMark, u.buf[u.count%2])
 		u.count += 1
-	case done:
-		return u, tea.Quit
 	case tea.KeyMsg:
 		switch msg.String() {
 		case "ctrl+c", "esc", "q":
@@ -67,6 +66,8 @@ func (u UiState) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		}
 	case spinner.TickMsg:
 		u.spinnner, cmd = u.spinnner.Update(msg)
+	case done:
+		return u, tea.Quit
 	case nothing:
 	}
 	return u, tea.Batch(u.pollingFunc, u.spinnner.Tick, cmd)
