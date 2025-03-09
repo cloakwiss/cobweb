@@ -2,30 +2,45 @@ package app
 
 import (
 	"fmt"
+	"strings"
 )
 
 type MsgCode uint8
 
 const (
-	VisitingPage MsgCode = iota
-	OnPage
-	OnScraped
+	downloadedPageCode MsgCode = iota
+	onPageCode
+	onScrapedCode
 )
 
-type ApMsg struct {
-	Code MsgCode
+// Please manintan the padding when ever you add a message
+var codes map[MsgCode]string = map[MsgCode]string{
+	downloadedPageCode: "Downloaded Page",
+	onPageCode:         "On Page        ",
+	onScrapedCode:      "On Scraped     ",
+}
+
+type ApMsg interface {
+	fmt.Stringer
+	Title() string
+	Msg() string
+}
+
+type DownloadedPage struct {
 	URL  string
+	Size uint
 }
 
-func (m ApMsg) String() (out string) {
-	switch m.Code {
-	case VisitingPage:
-		out = fmt.Sprintf("Visiting Page: %s", m.URL)
-	case OnPage:
-		out = fmt.Sprintf("On Page: %s", m.URL)
-	case OnScraped:
-		out = fmt.Sprintf("On Scraped: %s", m.URL)
-
-	}
-	return
+func (p DownloadedPage) Title() string { return codes[downloadedPageCode] }
+func (p DownloadedPage) Msg() string {
+	return fmt.Sprintf("%s  Size: %d", p.URL, p.Size)
 }
+func (p DownloadedPage) String() string { return p.Title() + "    " + p.Msg() }
+
+type OnPage struct {
+	PayLoad []string
+}
+
+func (v OnPage) Title() string  { return codes[onPageCode] }
+func (v OnPage) Msg() string    { return strings.Join(v.PayLoad, "  ") }
+func (v OnPage) String() string { return v.Title() + "    " + v.Msg() }

@@ -58,6 +58,8 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
 		// Need to measure the difference in performance (using some older version)
+		// TODO: first thing first how to use this, where to wait
+		// and where to call close for channel
 		// colly.Async(true),
 	)
 
@@ -72,13 +74,13 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		out <- app.ApMsg{
-			Code: app.VisitingPage,
-			URL:  r.URL.String(),
-		}
+		// out <- app.VisitingPage{
+		// 	PayLoad: []string{r.URL.String()},
+		// }
 		// fmt.Println("Visiting", r.URL.String())
 	})
 
+	//TODO: this cannot be left empty so what to do here
 	collector.OnError(func(r *colly.Response, err error) {})
 
 	// If my understanding is right then OnResponse is called when the Response is received
@@ -88,9 +90,22 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 	// I cannot find the much in docs and even they were not using `OnResponse` & `OnScraped`
 	// in tandem as I am planning to do
 	collector.OnResponse(func(res *colly.Response) {
-		out <- app.ApMsg{
-			Code: app.OnPage,
+		pagesContents[*res.Request.URL] = Page{
+			Data: res.Body,
+			// Assign this properly
+			Metadata: Metadata{
+				//TODO: Title is only possible for HTML so what should be title other things
+				Title:     "",
+				MediaType: strings.Join((*res.Headers)["Content-Type"], " "),
+			},
+		}
+		// size, err := strconv.ParseUint(res.Headers.Get("Content-Length"), 10, 32)
+		// if err != nil {
+		// 	size = 0
+		// }
+		out <- app.DownloadedPage{
 			URL:  res.Request.URL.String(),
+			Size: 0,
 		}
 		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
@@ -135,21 +150,12 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		collector.OnHTML("iframe[src]", htmlHandler("src"))
 	}
 
-	collector.OnScraped(func(r *colly.Response) {
-		pagesContents[*r.Request.URL] = Page{
-			Data: r.Body,
-			// Assign this properly
-			Metadata: Metadata{
-				// Title is only possible for HTML so what should be title other things
-				Title:     "",
-				MediaType: r.Headers.Get("Conten-Type"),
-			},
-		}
-		out <- app.ApMsg{
-			Code: app.OnScraped,
-			URL:  r.Request.URL.String(),
-		}
-	})
+	// collector.OnScraped(func(r *colly.Response) {
+	// 	out <- app.ApMsg{
+	// 		Code: app.OnScraped,
+	// 		URL:  r.Request.URL.String(),
+	// 	}
+	// })
 
 	// println("Started the scrapper")
 	collector.Visit(target.String())
