@@ -17,13 +17,13 @@ const (
 )
 
 type Options struct {
-	// exclude the following or not
-	Audio, Css, Iframe, Fonts, Js, Images, Video, Metadata bool
-	Targets, AllowDomains, BlockDomains                    []url.URL
-	Output, Cookie                                         string
-	Depth                                                  uint8
-	Mode                                                   Mode
-	Timeout                                                time.Duration
+	// Need to work out on how to handle metatdata
+	NoAudio, NoCss, NoIframe, NoFonts, NoJs, NoImages, NoVideo, NoMetadata bool
+	Targets, AllowDomains, BlockDomains                                    []url.URL
+	Output, Cookie                                                         string
+	Depth                                                                  uint8
+	Mode                                                                   Mode
+	Timeout                                                                time.Duration
 }
 
 func addURLs(raw []string) []url.URL {
@@ -74,13 +74,13 @@ func Args() Options {
 
 	// Copied from monolith => Maybe reorder it a bit
 	// Exclusion flags for various elements
-	rootCmd.Flags().BoolVarP(&args.Js, "no-js", "j", false, "Remove JavaScript")
-	rootCmd.Flags().BoolVarP(&args.Css, "no-css", "c", false, "Remove CSS")
-	rootCmd.Flags().BoolVarP(&args.Images, "no-images", "i", false, "Remove images")
-	rootCmd.Flags().BoolVarP(&args.Fonts, "no-fonts", "f", false, "Remove fonts")
-	rootCmd.Flags().BoolVarP(&args.Audio, "no-audio", "a", false, "Remove audio sources")
-	rootCmd.Flags().BoolVarP(&args.Video, "no-video", "V", false, "Remove video sources")
-	rootCmd.Flags().BoolVarP(&args.Metadata, "no-metadata", "m", false, "Exclude timestamp and source information")
+	rootCmd.Flags().BoolVarP(&args.NoJs, "no-js", "j", false, "Remove JavaScript")
+	rootCmd.Flags().BoolVarP(&args.NoCss, "no-css", "c", false, "Remove CSS")
+	rootCmd.Flags().BoolVarP(&args.NoImages, "no-images", "i", false, "Remove images")
+	rootCmd.Flags().BoolVarP(&args.NoFonts, "no-fonts", "f", false, "Remove fonts")
+	rootCmd.Flags().BoolVarP(&args.NoAudio, "no-audio", "a", false, "Remove audio sources")
+	rootCmd.Flags().BoolVarP(&args.NoVideo, "no-video", "V", false, "Remove video sources")
+	rootCmd.Flags().BoolVarP(&args.NoMetadata, "no-metadata", "m", false, "Exclude timestamp and source information")
 	//TODO: Check if this is possible in EPUB
 	// rootCmd.Flags().BoolP("no-frames", "F", false, "Remove frames and iframes")
 
