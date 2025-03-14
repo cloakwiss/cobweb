@@ -2,7 +2,7 @@ package fetch
 
 import (
 	"net/url"
-	"regexp"
+	// "regexp"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/app"
