@@ -5,13 +5,10 @@ package tidy
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#inlcude "headers/window_call.c"
+#include "headers/call.c"
 */
 import "C"
 import (
-	// "fmt"
-	// "io"
-	// "os"
 	"unsafe"
 )
 

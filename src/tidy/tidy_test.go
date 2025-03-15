@@ -1,4 +1,4 @@
-package tidy
+package tidy_test
 
 import (
 	"fmt"
