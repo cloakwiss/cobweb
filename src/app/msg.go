@@ -27,13 +27,12 @@ type ApMsg interface {
 }
 
 type DownloadedPage struct {
-	URL  string
-	Size uint
+	URL string
 }
 
 func (p DownloadedPage) Title() string { return codes[downloadedPageCode] }
 func (p DownloadedPage) Msg() string {
-	return fmt.Sprintf("%s  Size: %d", p.URL, p.Size)
+	return fmt.Sprintf("%s", p.URL)
 }
 func (p DownloadedPage) String() string { return p.Title() + "    " + p.Msg() }
 

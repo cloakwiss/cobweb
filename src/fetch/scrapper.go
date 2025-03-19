@@ -57,6 +57,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		colly.AllowedDomains(stringOfURL(argu.AllowDomains)...),
 		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
+		colly.UserAgent(header["User-Agent"][1]),
 	)
 
 	//TODO: do not change the order of these callback methods
@@ -95,8 +96,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		// 	size = 0
 		// }
 		out <- app.DownloadedPage{
-			URL:  res.Request.URL.String(),
-			Size: 0,
+			URL: res.Request.URL.String(),
 		}
 		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})

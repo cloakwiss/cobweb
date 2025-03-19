@@ -2,6 +2,7 @@ package manifests
 
 import (
 	"encoding/xml"
+	"fmt"
 	"slices"
 	"strings"
 )
@@ -62,4 +63,52 @@ func GenerateManifestSection(items []ManifestItem) ([]byte, error) {
 }
 func GenerateSpineSection(items []SpineItem) ([]byte, error) {
 	return generateSection("spine", 1, items)
+}
+
+type doc struct {
+	XMLName   struct{} `xml:"xml"`
+	Version   string   `xml:"version,attr"`
+	Encoding  string   `xml:"encoding,attr"`
+	Container container
+}
+
+type container struct {
+	// XMLName struct{}  `xml:"container"`
+	Root    rootfiles `xml:"rootfiles"`
+	Version string    `xml:"version,attr"`
+	Xmlns   string    `xml:"xmlns,attr"`
+}
+
+type rootfiles struct {
+	// XMLName struct{} `xml:"rootfiles"`
+	IRoot rootfile `xml:"rootfile"`
+}
+
+type rootfile struct {
+	// XMLName   struct{} `xml:"rootfile"`
+	Fullpath  string `xml:"full-path,attr"`
+	Mediatype string `xml:"media-type,attr"`
+}
+
+func NewContainer(path string) {
+	container := doc{
+		Version:  "1.0",
+		Encoding: "UTF-8",
+		Container: container{
+			Version: "1.0",
+			Xmlns:   "urn:oasis:names:tc:opendocument:xmlns:container",
+			Root: rootfiles{
+				IRoot: rootfile{
+					Fullpath:  path,
+					Mediatype: "application/oebps-package+xml",
+				},
+			},
+		},
+	}
+	out, er := xml.Marshal(container)
+	if er == nil {
+		fmt.Println(string(out))
+	} else {
+		fmt.Printf("Some errors: %s", er)
+	}
 }
