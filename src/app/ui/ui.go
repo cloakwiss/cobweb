@@ -89,26 +89,28 @@ func (u UiState) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case quit:
 		return u, tea.Quit
 	case app.ApMsg:
-		u.buf[u.receivedCount] = msg.String()
-		u.receivedCount += 1
+		// u.buf[u.receivedCount] = msg.String()
+		// u.receivedCount += 1
+		cmd = tea.Printf("%s  %s", checkMark, msg.String())
 	case printline:
-		if u.printedCount < u.receivedCount {
-			// if n := u.printedCount - 1; n >= 0 && u.receivedCount > n {
-			line := u.buf[u.printedCount]
-			cmd = tea.Printf("%s  %s", checkMark, line)
-			// }
-			u.printedCount += 1
+		// 	if u.printedCount < u.receivedCount {
+		// 		// if n := u.printedCount - 1; n >= 0 && u.receivedCount > n {
+		// 		line := u.buf[u.printedCount]
+		// 		cmd = tea.Printf("%s  %s", checkMark, line)
+		// 		// }
+		// 		u.printedCount += 1
+		// 	} else {
+		if u.channelOpen {
+			cmd = relay(nothing{})
 		} else {
-			if u.channelOpen {
-				cmd = relay(nothing{})
-			} else {
-				cmd = relay(quit{})
-			}
+			cmd = relay(quit{})
 		}
+	// 	}
 	case nothing:
 	}
 	if u.channelOpen {
 		return u, tea.Batch(u.pollChannel, u.spinnner.Tick, cmd, printTick())
+
 	}
 	return u, tea.Batch(u.spinnner.Tick, cmd, printTick())
 }

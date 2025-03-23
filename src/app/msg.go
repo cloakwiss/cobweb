@@ -10,14 +10,14 @@ type MsgCode uint8
 const (
 	downloadedPageCode MsgCode = iota
 	onPageCode
-	onScrapedCode
+	visitingPageCode
 )
 
 // Please manintan the padding when ever you add a message
 var codes map[MsgCode]string = map[MsgCode]string{
 	downloadedPageCode: "Downloaded Page",
 	onPageCode:         "On Page        ",
-	onScrapedCode:      "On Scraped     ",
+	visitingPageCode:   "Visiting Page  ",
 }
 
 type ApMsg interface {
@@ -43,3 +43,11 @@ type OnPage struct {
 func (v OnPage) Title() string  { return codes[onPageCode] }
 func (v OnPage) Msg() string    { return strings.Join(v.PayLoad, "  ") }
 func (v OnPage) String() string { return v.Title() + "    " + v.Msg() }
+
+type VisitingPage struct {
+	PayLoad []string
+}
+
+func (v VisitingPage) Title() string  { return codes[visitingPageCode] }
+func (v VisitingPage) Msg() string    { return strings.Join(v.PayLoad, "  ") }
+func (v VisitingPage) String() string { return v.Title() + "    " + v.Msg() }

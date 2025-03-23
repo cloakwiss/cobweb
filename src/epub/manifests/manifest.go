@@ -2,10 +2,12 @@ package manifests
 
 import (
 	"encoding/xml"
-	"fmt"
 	"slices"
 	"strings"
 )
+
+// content.opf
+// Not complete yet
 
 type ManifestItem struct {
 	FileId    string   `xml:"id,attr"`
@@ -58,6 +60,12 @@ func generateSection[S ManifestItem | SpineItem](sectionName string, indent int,
 	return slices.Clip(backingBytes), nil
 }
 
+// Store all the data in map and then based on the key decide
+// if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
+func GenerateMetadateSection(items map[string]string) {
+
+}
+
 func GenerateManifestSection(items []ManifestItem) ([]byte, error) {
 	return generateSection("manifest", 1, items)
 }
@@ -65,12 +73,7 @@ func GenerateSpineSection(items []SpineItem) ([]byte, error) {
 	return generateSection("spine", 1, items)
 }
 
-type doc struct {
-	XMLName   struct{} `xml:"xml"`
-	Version   string   `xml:"version,attr"`
-	Encoding  string   `xml:"encoding,attr"`
-	Container container
-}
+// Container.xml
 
 type container struct {
 	// XMLName struct{}  `xml:"container"`
@@ -90,25 +93,22 @@ type rootfile struct {
 	Mediatype string `xml:"media-type,attr"`
 }
 
-func NewContainer(path string) {
-	container := doc{
-		Version:  "1.0",
-		Encoding: "UTF-8",
-		Container: container{
-			Version: "1.0",
-			Xmlns:   "urn:oasis:names:tc:opendocument:xmlns:container",
-			Root: rootfiles{
-				IRoot: rootfile{
-					Fullpath:  path,
-					Mediatype: "application/oebps-package+xml",
-				},
+func NewContainer(path string) ([]byte, error) {
+	container := container{
+		Version: "1.0",
+		Xmlns:   "urn:oasis:names:tc:opendocument:xmlns:container",
+		Root: rootfiles{
+			IRoot: rootfile{
+				Fullpath:  path,
+				Mediatype: "application/oebps-package+xml",
 			},
 		},
 	}
-	out, er := xml.Marshal(container)
+	header := []byte(xml.Header)
+	by, er := xml.MarshalIndent(container, "", "  ")
 	if er == nil {
-		fmt.Println(string(out))
-	} else {
-		fmt.Printf("Some errors: %s", er)
+		header = append(header, by...)
+		return header, nil
 	}
+	return nil, er
 }

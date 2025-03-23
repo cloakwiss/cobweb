@@ -1,7 +1,7 @@
 package fetch
 
 import (
-	"fmt"
+	// "fmt"
 	"net/url"
 	"strings"
 
@@ -53,14 +53,21 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 	// println("Domain Name: ", target.String())
 	// println("Depth: ", argu.Depth)
 
+	rawAllowDomains := []url.URL{target}
+	if len(argu.AllowDomains) > 0 {
+		rawAllowDomains = append(rawAllowDomains, argu.AllowDomains...)
+	}
+	allowDomains := stringOfURL(rawAllowDomains)
+
 	// recurse limit is unused
 	collector := colly.NewCollector(
-		colly.AllowedDomains(stringOfURL([]url.URL{target})...),
-		colly.AllowedDomains(stringOfURL(argu.AllowDomains)...),
+		colly.AllowedDomains(allowDomains...),
 		// colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
 		colly.UserAgent(header["User-Agent"][1]),
 	)
+
+	collector.Limit(&colly.LimitRule{Parallelism: 3})
 
 	//TODO: do not change the order of these callback methods
 	// https://go-colly.org/docs/introduction/start/ read this
@@ -68,10 +75,10 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		// out <- app.VisitingPage{
-		// 	PayLoad: []string{r.URL.String()},
-		// }
-		fmt.Println("Visiting", r.URL.String())
+		out <- app.VisitingPage{
+			PayLoad: []string{r.URL.String()},
+		}
+		// fmt.Println("Visiting", r.URL.String())
 	})
 
 	//TODO: this cannot be left empty so what to do here
@@ -99,10 +106,10 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 			// if err != nil {
 			// 	size = 0
 			// }
-			// out <- app.DownloadedPage{
-			// 	URL: res.Request.URL.String(),
-			// }
-			fmt.Printf("On page: %v\n", res.Request.URL)
+			out <- app.DownloadedPage{
+				URL: res.Request.URL.String(),
+			}
+			// fmt.Printf("On page: %v\n", res.Request.URL)
 		}
 	})
 
@@ -244,6 +251,5 @@ func stringOfURL(urls []url.URL) []string {
 			parsed = append(parsed, ur)
 		}
 	}
-	println("Doamin name ", parsed[0])
 	return parsed
 }
