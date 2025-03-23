@@ -1,6 +1,7 @@
 package fetch
 
 import (
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -54,8 +55,9 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
+		colly.AllowedDomains(stringOfURL([]url.URL{target})...),
 		colly.AllowedDomains(stringOfURL(argu.AllowDomains)...),
-		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
+		// colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
 		colly.UserAgent(header["User-Agent"][1]),
 	)
@@ -69,7 +71,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 		// out <- app.VisitingPage{
 		// 	PayLoad: []string{r.URL.String()},
 		// }
-		// fmt.Println("Visiting", r.URL.String())
+		fmt.Println("Visiting", r.URL.String())
 	})
 
 	//TODO: this cannot be left empty so what to do here
@@ -82,23 +84,26 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 	// I cannot find the much in docs and even they were not using `OnResponse` & `OnScraped`
 	// in tandem as I am planning to do
 	collector.OnResponse(func(res *colly.Response) {
-		pagesContents[*res.Request.URL] = Page{
-			Data: res.Body,
-			// Assign this properly
-			Metadata: Metadata{
-				//TODO: Title is only possible for HTML so what should be title other things
-				Title:     "",
-				MediaType: strings.Join((*res.Headers)["Content-Type"], " "),
-			},
+		_, found := pagesContents[*res.Request.URL]
+		if !found {
+			pagesContents[*res.Request.URL] = Page{
+				Data: res.Body,
+				// Assign this properly
+				Metadata: Metadata{
+					//TODO: Title is only possible for HTML so what should be title other things
+					Title:     "",
+					MediaType: strings.Join((*res.Headers)["Content-Type"], " "),
+				},
+			}
+			// size, err := strconv.ParseUint(res.Headers.Get("Content-Length"), 10, 32)
+			// if err != nil {
+			// 	size = 0
+			// }
+			// out <- app.DownloadedPage{
+			// 	URL: res.Request.URL.String(),
+			// }
+			fmt.Printf("On page: %v\n", res.Request.URL)
 		}
-		// size, err := strconv.ParseUint(res.Headers.Get("Content-Length"), 10, 32)
-		// if err != nil {
-		// 	size = 0
-		// }
-		out <- app.DownloadedPage{
-			URL: res.Request.URL.String(),
-		}
-		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
 	// Need to add others too
@@ -232,8 +237,13 @@ func stringOfURL(urls []url.URL) []string {
 		if u.Scheme == "http" || u.Scheme == "https" {
 			//WARN: This url's port is stripped here
 			ur := u.Hostname()
+			if u.Port() != "" {
+				ur += ":"
+				ur += u.Port()
+			}
 			parsed = append(parsed, ur)
 		}
 	}
+	println("Doamin name ", parsed[0])
 	return parsed
 }

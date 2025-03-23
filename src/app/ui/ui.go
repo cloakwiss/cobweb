@@ -37,7 +37,7 @@ func getMsg(input <-chan app.ApMsg) tea.Cmd {
 
 func NewModel(c chan app.ApMsg) UiState {
 	return UiState{
-		buf:           make([]string, 1000),
+		buf:           make([]string, 10000),
 		pollChannel:   getMsg(c),
 		spinnner:      spinner.New(),
 		channelOpen:   true,
