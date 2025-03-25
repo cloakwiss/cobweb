@@ -1,6 +1,7 @@
 package tidy
 
 /*
+#cgo LDFLAGS: -L../ -ltidy
 #include "headers/call.c"
 #include <stdlib.h>
 #include <stdint.h>

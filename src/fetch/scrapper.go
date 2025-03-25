@@ -1,13 +1,26 @@
 package fetch
 
 import (
+	"fmt"
 	"net/url"
-	// "regexp"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/app"
 	"github.com/gocolly/colly"
 )
+
+type PageTable map[url.URL]Page
+
+type Page struct {
+	Data []byte
+	Metadata
+}
+
+type Metadata struct {
+	// TODO: make this enum later
+	MediaType string
+	Title     string
+}
 
 // These are header collected from some pages have not figured out how to use it effectively
 // Ideally these should not be required
@@ -34,25 +47,26 @@ var header = map[string][]string{
 //
 // TODO: added some headers, caching and URL filter smarter
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
-func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.URL][]byte {
-	defer close(out)
-	var pagesContents map[url.URL][]byte = make(map[url.URL][]byte)
+func Scrapper(target url.URL, argu app.Options) PageTable {
+	pagesContents := make(PageTable)
 	// println("Domain Name: ", target.String())
 	// println("Depth: ", argu.Depth)
 
+	rawAllowDomains := []url.URL{target}
+	if len(argu.AllowDomains) > 0 {
+		rawAllowDomains = append(rawAllowDomains, argu.AllowDomains...)
+	}
+	allowDomains := stringOfURL(rawAllowDomains)
+
 	// recurse limit is unused
 	collector := colly.NewCollector(
-		colly.AllowedDomains(stringOfURL(argu.AllowDomains)...),
-		colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
+		colly.AllowedDomains(allowDomains...),
+		// colly.DisallowedDomains(stringOfURL(argu.BlockDomains)...),
 		colly.MaxDepth(int(argu.Depth)+1),
-		// Need to measure the difference in performance (using some older version)
-		// colly.Async(true),
+		colly.UserAgent(header["User-Agent"][1]),
 	)
 
-	//TODO: Need to add a delay too and expose as flag to cli
-	// c.Limit(&colly.LimitRule{
-	// 	Delay: time.Second,
-	// })
+	collector.Limit(&colly.LimitRule{Parallelism: 3})
 
 	//TODO: do not change the order of these callback methods
 	// https://go-colly.org/docs/introduction/start/ read this
@@ -60,30 +74,53 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		out <- app.ApMsg{
-			Code: app.VisitingPage,
-			URL:  r.URL.String(),
-		}
-		// fmt.Println("Visiting", r.URL.String())
+		fmt.Println("Visiting", r.URL.String())
 	})
 
+	//TODO: this cannot be left empty so what to do here
 	collector.OnError(func(r *colly.Response, err error) {})
 
+	// If my understanding is right then OnResponse is called when the Response is received
+	// and if it is HTML then `OnHTML` is also called followed by `OnScraped` otherwise
+	// `OnScraped` is called directly.
+	// FIND: So, What does `OnScraped` allows to do which `OnResponse` cannot ?
+	// I cannot find the much in docs and even they were not using `OnResponse` & `OnScraped`
+	// in tandem as I am planning to do
 	collector.OnResponse(func(res *colly.Response) {
-		out <- app.ApMsg{
-			Code: app.OnPage,
-			URL:  res.Request.URL.String(),
+		_, found := pagesContents[*res.Request.URL]
+		if !found {
+			pagesContents[*res.Request.URL] = Page{
+				Data: res.Body,
+				// Assign this properly
+				Metadata: Metadata{
+					//TODO: Title is only possible for HTML so what should be title other things
+					Title:     "",
+					MediaType: strings.Join((*res.Headers)["Content-Type"], " "),
+				},
+			}
+			// size, err := strconv.ParseUint(res.Headers.Get("Content-Length"), 10, 32)
+			// if err != nil {
+			// 	size = 0
+			// }
+			fmt.Printf("On page: %v\n", res.Request.URL)
 		}
-		// fmt.Printf("On page: %v\n", res.Request.URL)
 	})
 
 	// Need to add others too
 	{
 		// TODO: need to find out how can I apply the filter in this function for various resources
+		// There will be 2 layers of filtering:
+		// 1. Will be based on extension of file based on URI
+		// 2. Will be based on http header `Content-Type`
+		//
+		// Type 1 will be implemented here
 		htmlHandler := func(tag string) colly.HTMLCallback {
+			shouldAllow := assetFilterByExtension(argu)
 			return func(e *colly.HTMLElement) {
 				link := e.Attr(tag)
-				e.Request.Visit(link)
+				if shouldAllow(link) {
+					e.Request.Visit(link)
+				}
 			}
 		}
 
@@ -95,6 +132,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 
 		collector.OnHTML("data[object]", htmlHandler("object"))
 
+		// Need to see usage of these tags in the wild
 		collector.OnHTML("del[cite]", htmlHandler("cite"))
 		collector.OnHTML("ins[cite]", htmlHandler("cite"))
 		collector.OnHTML("blockquote[cite]", htmlHandler("cite"))
@@ -108,19 +146,75 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) map[url.UR
 		collector.OnHTML("iframe[src]", htmlHandler("src"))
 	}
 
-	collector.OnScraped(func(r *colly.Response) {
-		pagesContents[*r.Request.URL] = r.Body
-		out <- app.ApMsg{
-			Code: app.OnScraped,
-			URL:  r.Request.URL.String(),
-		}
-	})
+	// collector.OnScraped(func(r *colly.Response) {
+	// 	out <- app.ApMsg{
+	// 		Code: app.OnScraped,
+	// 		URL:  r.Request.URL.String(),
+	// 	}
+	// })
 
 	// println("Started the scrapper")
 	collector.Visit(target.String())
 
 	//-------------------------------------------------------
 	return pagesContents
+}
+
+// This function will produce the pattern to match for html handler
+// based on arguments given, this is desgined to be called once only
+//
+// The assets that matches the patter will be excluded
+func assetFilterByExtension(opts app.Options) func(string) bool {
+	parts := make([]string, 0, 7)
+	if opts.NoCss {
+		parts = append(parts, ".css")
+	}
+	if opts.NoJs {
+		parts = append(parts, ".js")
+	}
+	if opts.NoFonts {
+		parts = append(parts, ".woff2")
+		parts = append(parts, ".woff")
+		parts = append(parts, ".otf")
+		parts = append(parts, ".ttf")
+		// This will make thing very dicey
+		parts = append(parts, ".svg")
+	}
+	if opts.NoImages {
+		parts = append(parts, ".png")
+		parts = append(parts, ".jpeg")
+		parts = append(parts, ".gif")
+		parts = append(parts, ".webp")
+		parts = append(parts, ".svg")
+	}
+	// Is it feasible to enumerate all the file formats here
+	// if opts.Audio { }
+	// if opts.Video { }
+
+	// This will need some thing special and maybe should be covered with
+	// another function but
+	// if opts.Iframe { }
+	return func(uri string) bool {
+		for _, ext := range parts {
+			if strings.HasSuffix(uri, ext) {
+				return false
+			}
+		}
+		return true
+	}
+}
+
+func assetFilterByHeader(opts app.Options) {
+	if opts.NoCss {
+	}
+	if opts.NoJs {
+	}
+	if opts.NoFonts {
+		// This will make thing very dicey
+	}
+	if opts.NoImages {
+	}
+
 }
 
 // Stick to url struct as much as possible
@@ -143,6 +237,10 @@ func stringOfURL(urls []url.URL) []string {
 		if u.Scheme == "http" || u.Scheme == "https" {
 			//WARN: This url's port is stripped here
 			ur := u.Hostname()
+			if u.Port() != "" {
+				ur += ":"
+				ur += u.Port()
+			}
 			parsed = append(parsed, ur)
 		}
 	}
