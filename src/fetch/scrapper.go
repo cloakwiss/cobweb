@@ -2,6 +2,7 @@ package fetch
 
 import (
 	// "fmt"
+	"fmt"
 	"net/url"
 	"strings"
 
@@ -47,8 +48,7 @@ var header = map[string][]string{
 //
 // TODO: added some headers, caching and URL filter smarter
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
-func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable {
-	defer close(out)
+func Scrapper(target url.URL, argu app.Options) PageTable {
 	pagesContents := make(PageTable)
 	// println("Domain Name: ", target.String())
 	// println("Depth: ", argu.Depth)
@@ -75,10 +75,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		out <- app.VisitingPage{
-			PayLoad: []string{r.URL.String()},
-		}
-		// fmt.Println("Visiting", r.URL.String())
+		fmt.Println("Visiting", r.URL.String())
 	})
 
 	//TODO: this cannot be left empty so what to do here
@@ -106,10 +103,7 @@ func Scrapper(target url.URL, argu app.Options, out chan<- app.ApMsg) PageTable 
 			// if err != nil {
 			// 	size = 0
 			// }
-			out <- app.DownloadedPage{
-				URL: res.Request.URL.String(),
-			}
-			// fmt.Printf("On page: %v\n", res.Request.URL)
+			fmt.Printf("On page: %v\n", res.Request.URL)
 		}
 	})
 
