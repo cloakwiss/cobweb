@@ -36,9 +36,7 @@ func WriteTozip(pages map[string][]byte, outputZipFile string) {
 			if err != nil {
 				log.Fatal(err)
 			}
-			// converting to xhtml
-			xhtml := tidy.TidyHTML(file)
-			_, err = f.Write(xhtml)
+			_, err = f.Write(file)
 			if err != nil {
 				log.Fatal(err)
 			}
