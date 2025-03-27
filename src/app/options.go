@@ -28,6 +28,7 @@ type Options struct {
 	Timeout                                                                time.Duration
 }
 
+// Needed for logging capablities
 func (o Options) String() string {
 	flags := []string{}
 	if o.NoAudio {

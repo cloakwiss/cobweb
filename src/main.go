@@ -32,5 +32,7 @@ func main() {
 	// }
 	// zip.WriteTozip(npages, args.Output+".zip")
 
+	// NEED TO DO SOMETHING ABOUT THIS, HOW TO LAUNCH IT VIA CLI WITHOUT
+	// CHANGING THE OPTIONS STRUCT
 	web_ui.Launch()
 }

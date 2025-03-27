@@ -24,6 +24,7 @@ type Result struct {
 	Message     string
 }
 
+// Needed for working with horid json object
 func WebOptToOpt(w WebOptions) app.Options {
 	targets := strings.Split(w.Targets, ",")
 	target_urls := app.AddUrls(targets)
@@ -51,8 +52,9 @@ func WebOptToOpt(w WebOptions) app.Options {
 		Output:       w.Output,
 		Cookie:       w.Cookie,
 		Depth:        w.Depth,
-		Mode:         app.Mode(app.Debug),
-		Timeout:      timeout,
+		// What is this why do we need this
+		Mode:    app.Mode(app.Debug),
+		Timeout: timeout,
 	}
 }
 
@@ -67,10 +69,17 @@ func RunApp(args app.Options) Result {
 			npages[stripped] = val.Data
 		}
 	}
+
+	// In Web Ui the default result path should be something different like a
+	// downloads folder
 	zip.WriteTozip(npages, args.Output+".zip")
+
+
 
 	return Result{
 		DownloadUrl: "/" + args.Output + ".zip",
+
+		// This needs to be the error messages unless we are going to use web socket shenanigans
 		Message: "Pokemon",
 	}
 }

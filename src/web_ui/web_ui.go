@@ -18,6 +18,7 @@ import (
 const DOMAIN = ":8080"
 const PUBLIC_PREFIX = "./public"
 
+// THIS ENTIRE THING NEEDS PROPER LOGGING
 func Launch() {
 	router := chi.NewRouter()
 
@@ -138,7 +139,6 @@ func ArchiveRequest(writer http.ResponseWriter, request *http.Request) {
 
 	args := WebOptToOpt(request_obj)
 	fmt.Println(args.String())
-
 
 	result := RunApp(args)
 
