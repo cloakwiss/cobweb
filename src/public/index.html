@@ -10,13 +10,38 @@
     <div class="container">
         <h1>Cobweb</h1>
         <p>A Minimal and User-Friendly Website Archiver</p>
+        
         <form id="archiveForm">
-            <input type="text" name="A" id="inputA" placeholder="Enter value for A" required>
-            <input type="text" name="B" id="inputB" placeholder="Enter value for B" required>
+			<h2>URLs</h2>
+			<input type="text" id="Targets" placeholder="Enter Target URLs (comma-separated)">
+			<input type="text" id="AllowDomains" placeholder="Allowed Domains (comma-separated)">
+			<input type="text" id="BlockDomains" placeholder="Blocked Domains (comma-separated)">
+
+            <h2>Filters</h2>
+            <div class="toggle-group">
+                <label><input type="checkbox" id="NoAudio"> No Audio</label>
+                <label><input type="checkbox" id="NoCss"> No CSS</label>
+                <label><input type="checkbox" id="NoIframe"> No Iframe</label>
+                <label><input type="checkbox" id="NoFonts"> No Fonts</label>
+                <label><input type="checkbox" id="NoJs"> No JavaScript</label>
+                <label><input type="checkbox" id="NoImages"> No Images</label>
+                <label><input type="checkbox" id="NoVideo"> No Video</label>
+                <label><input type="checkbox" id="NoMetadata"> No Metadata</label>
+            </div>
+
+            <h2>Settings</h2>
+            <input type="text" id="Output" placeholder="Output Path">
+            <input type="text" id="Cookie" placeholder="Cookies">
+            <input type="number" id="Depth" placeholder="Depth (0-255)" min="0" max="255">
+            <!-- needs checking before adding this <input type="text" id="Mode" placeholder="Mode"> -->
+            <input type="number" id="Timeout" placeholder="Timeout (ms)" min="0">
+
             <button type="submit">Submit</button>
         </form>
+
         <div id="message"></div>
     </div>
+    
     <script src="script.js"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ char *tidy_html(char *buff, uint64_t buff_size) {
 
     TidyDoc tdoc = tidyCreate(); // Initialize "document"
 
-    ok = tidyOptSetBool(tdoc, TidyXhtmlOut | TidyUseCustomTags, yes); // Convert to XHTML
+    ok = tidyOptSetBool(tdoc, TidyXhtmlOut, yes); // Convert to XHTML
                                                   //
     if (ok)
         rc = tidySetErrorBuffer(tdoc, &errbuf); // Capture diagnostics

@@ -7,24 +7,16 @@ import (
 	"fmt"
 	"net/http"
 	"os"
-	"path/filepath"
+	// "path/filepath"
 	"strings"
 
+	// "github.com/cloakwiss/cobweb/app"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
 
 const DOMAIN = ":8080"
 const PUBLIC_PREFIX = "./public"
-
-type Query struct {
-	A int
-	B int
-}
-
-type Result struct {
-	Result int
-}
 
 func Launch() {
 	router := chi.NewRouter()
@@ -69,7 +61,7 @@ func Launch() {
 		fmt.Println(err)
 	}
 
-	filesDir := http.Dir(filepath.Join(workDir, "results"))
+	filesDir := http.Dir(workDir)
 	FileServer(router, "/", filesDir)
 	// ---------------------------------------------------------------------------
 
@@ -136,16 +128,7 @@ func FileServer(r chi.Router, path string, root http.FileSystem) {
 
 // Post Request Handling for archive
 func ArchiveRequest(writer http.ResponseWriter, request *http.Request) {
-	// q := Query {
-	// 	A: 32,
-	// 	B: 32,
-	// }
-	// m, e := json.Marshal(q)
-	// if e != nil {
-	// }
-	// fmt.Println(string(m))
-
-	var request_obj Query
+	var request_obj WebOptions
 
 	err := json.NewDecoder(request.Body).Decode(&request_obj)
 	if err != nil {
@@ -153,11 +136,14 @@ func ArchiveRequest(writer http.ResponseWriter, request *http.Request) {
 	}
 	fmt.Println(request_obj)
 
-	result := Result{
-		Result: request_obj.A * request_obj.B,
-	}
+	args := WebOptToOpt(request_obj)
+	fmt.Println(args.String())
+
+
+	result := RunApp(args)
 
 	response_bytes, resp_err := json.Marshal(result)
+	fmt.Println(string(response_bytes))
 	if resp_err != nil {
 		fmt.Println(err)
 		response_bytes = []byte("error in response")
