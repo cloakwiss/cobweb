@@ -6,9 +6,54 @@ import (
 	"strings"
 )
 
-// content.opf
-// Not complete yet
+// Container.xml
+type container struct {
+	// XMLName struct{}  `xml:"container"`
+	Root    rootfiles `xml:"rootfiles"`
+	Version string    `xml:"version,attr"`
+	Xmlns   string    `xml:"xmlns,attr"`
+}
 
+type rootfiles struct {
+	IRoot rootfile `xml:"rootfile"`
+}
+
+type rootfile struct {
+	Fullpath  string `xml:"full-path,attr"`
+	Mediatype string `xml:"media-type,attr"`
+}
+
+func NewContainer(path string) ([]byte, error) {
+	container := container{
+		Version: "1.0",
+		Xmlns:   "urn:oasis:names:tc:opendocument:xmlns:container",
+		Root: rootfiles{
+			IRoot: rootfile{
+				Fullpath:  path,
+				Mediatype: "application/oebps-package+xml",
+			},
+		},
+	}
+	header := []byte(xml.Header)
+	by, er := xml.MarshalIndent(container, "", "  ")
+	if er == nil {
+		header = append(header, by...)
+		return header, nil
+	}
+	return nil, er
+}
+
+// content.opf
+
+// metadata section of content.opf
+//
+// Store all the data in map and then based on the key decide
+// if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
+func GenerateMetadateSection(items map[string]string) {
+
+}
+
+// Manifest Section of content.opf
 type ManifestItem struct {
 	FileId    string   `xml:"id,attr"`
 	FilePath  string   `xml:"href,attr"`
@@ -16,10 +61,21 @@ type ManifestItem struct {
 	XMLName   struct{} `xml:"item"`
 }
 
+func GenerateManifestSection(items []ManifestItem) ([]byte, error) {
+	return generateSection("manifest", 1, items)
+}
+
+// Spine Section of content.opf
 type SpineItem struct {
 	Idref   string   `xml:"idref,attr"`
 	XMLName struct{} `xml:"itemref"`
 }
+
+func GenerateSpineSection(items []SpineItem) ([]byte, error) {
+	return generateSection("spine", 1, items)
+}
+
+// General Functions
 
 // Need to be very very careful when using this
 func removeClose(buf []byte) []byte {
@@ -58,57 +114,4 @@ func generateSection[S ManifestItem | SpineItem](sectionName string, indent int,
 	backingBytes = append(backingBytes, byte('\n'))
 
 	return slices.Clip(backingBytes), nil
-}
-
-// Store all the data in map and then based on the key decide
-// if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
-func GenerateMetadateSection(items map[string]string) {
-
-}
-
-func GenerateManifestSection(items []ManifestItem) ([]byte, error) {
-	return generateSection("manifest", 1, items)
-}
-func GenerateSpineSection(items []SpineItem) ([]byte, error) {
-	return generateSection("spine", 1, items)
-}
-
-// Container.xml
-
-type container struct {
-	// XMLName struct{}  `xml:"container"`
-	Root    rootfiles `xml:"rootfiles"`
-	Version string    `xml:"version,attr"`
-	Xmlns   string    `xml:"xmlns,attr"`
-}
-
-type rootfiles struct {
-	// XMLName struct{} `xml:"rootfiles"`
-	IRoot rootfile `xml:"rootfile"`
-}
-
-type rootfile struct {
-	// XMLName   struct{} `xml:"rootfile"`
-	Fullpath  string `xml:"full-path,attr"`
-	Mediatype string `xml:"media-type,attr"`
-}
-
-func NewContainer(path string) ([]byte, error) {
-	container := container{
-		Version: "1.0",
-		Xmlns:   "urn:oasis:names:tc:opendocument:xmlns:container",
-		Root: rootfiles{
-			IRoot: rootfile{
-				Fullpath:  path,
-				Mediatype: "application/oebps-package+xml",
-			},
-		},
-	}
-	header := []byte(xml.Header)
-	by, er := xml.MarshalIndent(container, "", "  ")
-	if er == nil {
-		header = append(header, by...)
-		return header, nil
-	}
-	return nil, er
 }
