@@ -1,8 +1,8 @@
 package manifests
 
 import (
+	"bufio"
 	"encoding/xml"
-	"slices"
 	"strings"
 )
 
@@ -23,7 +23,7 @@ type rootfile struct {
 	Mediatype string `xml:"media-type,attr"`
 }
 
-func NewContainer(path string) ([]byte, error) {
+func NewContainer(writeBuffer *bufio.Writer, path string) ([]byte, error) {
 	container := container{
 		Version: "1.0",
 		// Is this namespace required
@@ -57,10 +57,13 @@ var DublinCoreElements = [][]string{
 
 // Store all the data in map and then based on the key decide
 // if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
-func GenerateMetadateSection(items map[string]string) (buf []byte) {
-	buf = make([]byte, 0, 1000)
-	buf = append(buf, []byte("<metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">")...)
-	buf = append(buf, []byte("</metadata>")...)
+func GenerateMetadateSection(writeBuffer *bufio.Writer, items map[string]string) (er error) {
+	if _, er = writeBuffer.WriteString("<metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">"); er != nil {
+		return
+	}
+	if _, er = writeBuffer.WriteString("</metadata>"); er != nil {
+		return
+	}
 	for element, value := range items {
 		var data string
 		switch element {
@@ -70,12 +73,23 @@ func GenerateMetadateSection(items map[string]string) (buf []byte) {
 
 		default:
 		}
-		buf = append(buf, []byte(data)...)
+		if _, er = writeBuffer.WriteString(data); er != nil {
+			return
+		}
 	}
 	return
 }
 
-func generateDublinCoreElements(element string, value string) {}
+func GeneratePackageStart(writeBuffer *bufio.Writer, uniqueId string) (er error) {
+	if _, er = writeBuffer.WriteString("<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\""); er != nil {
+		return
+	}
+	uid := " unique-identifier=\"" + uniqueId + "\">"
+	if _, er = writeBuffer.WriteString(uid); er != nil {
+		return
+	}
+	return nil
+}
 
 // ------------------
 
@@ -88,8 +102,8 @@ type ManifestItem struct {
 }
 
 // TODO: TOC files needs a special it
-func GenerateManifestSection(items []ManifestItem) ([]byte, error) {
-	return generateSection("manifest", 1, items)
+func GenerateManifestSection(writeBuffer *bufio.Writer, items []ManifestItem) error {
+	return generateSection(writeBuffer, "manifest", 1, items)
 }
 
 // Spine Section of content.opf
@@ -98,8 +112,8 @@ type SpineItem struct {
 	XMLName struct{} `xml:"itemref"`
 }
 
-func GenerateSpineSection(items []SpineItem) ([]byte, error) {
-	return generateSection("spine", 1, items)
+func GenerateSpineSection(writeBuffer *bufio.Writer, items []SpineItem) error {
+	return generateSection(writeBuffer, "spine", 1, items)
 }
 
 // General Functions
@@ -115,30 +129,47 @@ func removeClose(buf []byte) []byte {
 	return buf[0:idx]
 }
 
-func generateSection[S ManifestItem | SpineItem](sectionName string, indent int, items []S) ([]byte, error) {
-	backingBytes := make([]byte, 0, len(items)*128)
-	start := []byte("<" + sectionName + ">")
-	end := []byte("</" + sectionName + ">")
+func generateSection[S ManifestItem | SpineItem](writeBuffer *bufio.Writer, sectionName string, indent int, items []S) error {
+	l0 := strings.Repeat("\t", indent+0)
+	l1 := strings.Repeat("\t", indent+1)
 
-	backingBytes = append(backingBytes, []byte(strings.Repeat(string('\t'), indent))...)
-	backingBytes = append(backingBytes, start...)
-	backingBytes = append(backingBytes, byte('\n'))
+	start := []byte("<" + sectionName + ">\n")
+	end := []byte("</" + sectionName + ">\n")
+
+	if _, err := writeBuffer.WriteString(l0); err != nil {
+		return err
+	}
+	if _, err := writeBuffer.Write(start); err != nil {
+		return err
+	}
 
 	for _, it := range items {
 		bytes, er := xml.Marshal(it)
+
 		if er != nil {
-			return nil, er
+			return er
 		}
+
 		bytes = removeClose(bytes)
-		backingBytes = append(backingBytes, []byte(strings.Repeat(string('\t'), indent+1))...)
-		backingBytes = append(backingBytes, bytes...)
-		backingBytes = append(backingBytes, byte('\n'))
+
+		if _, err := writeBuffer.WriteString(l1); err != nil {
+			return err
+		}
+		if _, err := writeBuffer.Write(bytes); err != nil {
+			return err
+		}
+		if _, err := writeBuffer.WriteRune('\n'); err != nil {
+			return err
+		}
 
 	}
 
-	backingBytes = append(backingBytes, []byte(strings.Repeat(string('\t'), indent))...)
-	backingBytes = append(backingBytes, end...)
-	backingBytes = append(backingBytes, byte('\n'))
+	if _, err := writeBuffer.WriteString(l0); err != nil {
+		return err
+	}
+	if _, err := writeBuffer.Write(end); err != nil {
+		return err
+	}
 
-	return slices.Clip(backingBytes), nil
+	return nil
 }

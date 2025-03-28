@@ -2,7 +2,7 @@ package manifests_test
 
 import (
 	"bufio"
-	"os"
+	"bytes"
 	"testing"
 
 	"github.com/cloakwiss/cobweb/epub/manifests"
@@ -200,13 +200,10 @@ func TestDirectoryTree(t *testing.T) {
 		"/mimetype",
 	}
 	root := manifests.GenerateDirectoryTree(files)
-	// buf := make([]byte, 10000)
-	// out := bytes.NewBuffer(buf)
-	out := os.Stdout
+	buf := make([]byte, 10000)
+	out := bytes.NewBuffer(buf)
 	writ := bufio.NewWriter(out)
-	println("Before: ", writ.Available())
 	manifests.MarshalToc(root, writ)
-	println("After: ", writ.Available())
 	writ.Flush()
-	println("After: ", writ.Available())
+	println(string(out.Bytes()))
 }

@@ -78,41 +78,40 @@ func GenerateDirectoryTree(fileslist []string) Directory {
 	return directoryTree("", fileslist)
 }
 
-func MarshalToc(dir Directory, writeFile *bufio.Writer) {
-	marshalToc(dir, 0, writeFile)
+func MarshalToc(dir Directory, writeBuffer *bufio.Writer) {
+	marshalToc(dir, 0, writeBuffer)
 }
 
-func marshalToc(dir Directory, indent int, writeFile *bufio.Writer) {
+func marshalToc(dir Directory, indent int, writeBuffer *bufio.Writer) {
 	l0 := strings.Repeat("\t", indent+0)
 	l1 := strings.Repeat("\t", indent+1)
 	l2 := strings.Repeat("\t", indent+2)
 
-	writeFile.WriteString(l0 + "<li>")
-	defer writeFile.WriteString(l0 + "</li>\n")
+	writeBuffer.WriteString(l0 + "<li>")
+	defer writeBuffer.WriteString(l0 + "</li>\n")
 
-	writeFile.WriteString("<span>")
-	if er := xml.EscapeText(writeFile, []byte(dir.Path)); er != nil {
+	writeBuffer.WriteString("<span>")
+	if er := xml.EscapeText(writeBuffer, []byte(dir.Path)); er != nil {
 		log.Fatal("Marshalling Toc failed during writing Path")
 	}
-	writeFile.WriteString("</span>\n")
+	writeBuffer.WriteString("</span>\n")
 
-	writeFile.WriteString(l1 + "<ol>\n")
-	writeFile.Flush()
+	writeBuffer.WriteString(l1 + "<ol>\n")
+	writeBuffer.Flush()
 
 	for _, subdir := range dir.SubDirs {
-		marshalToc(subdir, indent+1, writeFile)
+		marshalToc(subdir, indent+1, writeBuffer)
 	}
 
 	for _, file := range dir.Files {
-		writeFile.WriteString(l2 + "<li><a href=\"")
-		writeFile.WriteString(file.Path + "/" + file.Name)
-		writeFile.WriteString("\">")
-		if er := xml.EscapeText(writeFile, []byte(file.Name)); er != nil {
+		writeBuffer.WriteString(l2 + "<li><a href=\"")
+		writeBuffer.WriteString(file.Path + "/" + file.Name)
+		writeBuffer.WriteString("\">")
+		if er := xml.EscapeText(writeBuffer, []byte(file.Name)); er != nil {
 			log.Fatal("Marshalling Toc failed during writing Path")
 		}
-		writeFile.WriteString("</a></li>\n")
+		writeBuffer.WriteString("</a></li>\n")
 	}
-	writeFile.WriteString(l1 + "</ol>\n")
-	writeFile.Flush()
-
+	writeBuffer.WriteString(l1 + "</ol>\n")
+	writeBuffer.Flush()
 }

@@ -1,7 +1,8 @@
 package manifests_test
 
 import (
-	"fmt"
+	"bufio"
+	"bytes"
 	"testing"
 
 	"github.com/cloakwiss/cobweb/epub/manifests"
@@ -36,17 +37,29 @@ func TestManifestSection(t *testing.T) {
 		{FileId: "f_0003", FilePath: "f_0003.html", MediaType: "application/xhtml+xml"},
 		{FileId: "f_0004", FilePath: "f_0004.html", MediaType: "application/xhtml+xml"},
 	}
-	by, _ := manifests.GenerateManifestSection(input)
-	fmt.Println(string(by))
+	buf := make([]byte, 1024)
+	out := bytes.NewBuffer(buf)
+	writ := bufio.NewWriter(out)
+	manifests.GenerateManifestSection(writ, input)
+	writ.Flush()
+	println(string(out.Bytes()))
 }
 
 func TestSpineSection(t *testing.T) {
+	buf := make([]byte, 1024)
+	out := bytes.NewBuffer(buf)
+	writ := bufio.NewWriter(out)
 	items := []manifests.SpineItem{{Idref: "cover"}, {Idref: "f_0000"}, {Idref: "f_0001"}, {Idref: "f_0002"}, {Idref: "f_0003"}, {Idref: "f_0004"}, {Idref: "f_0005"}, {Idref: "f_0006"}, {Idref: "f_0007"}, {Idref: "f_0008"}, {Idref: "f_0009"}, {Idref: "f_0010"}, {Idref: "f_0011"}, {Idref: "f_0012"}, {Idref: "f_0013"}, {Idref: "f_0014"}, {Idref: "f_0015"}, {Idref: "f_0016"}, {Idref: "f_0017"}, {Idref: "f_0018"}, {Idref: "f_0019"}, {Idref: "f_0020"}, {Idref: "f_0021"}, {Idref: "f_0022"}, {Idref: "f_0023"}, {Idref: "f_0024"}, {Idref: "f_0025"}, {Idref: "f_0026"}, {Idref: "f_0027"}, {Idref: "f_0028"}, {Idref: "f_0029"}, {Idref: "f_0030"}, {Idref: "f_0031"}, {Idref: "f_0032"}, {Idref: "f_0033"}, {Idref: "f_0034"}, {Idref: "f_0035"}, {Idref: "f_0036"}, {Idref: "f_0037"}, {Idref: "f_0038"}, {Idref: "f_0039"}, {Idref: "f_0040"}, {Idref: "f_0041"}, {Idref: "f_0042"}, {Idref: "f_0043"}, {Idref: "f_0044"}, {Idref: "f_0045"}, {Idref: "f_0046"}, {Idref: "f_0047"}, {Idref: "f_0048"}, {Idref: "f_0049"}, {Idref: "f_0050"}, {Idref: "f_0051"}, {Idref: "f_0052"}, {Idref: "f_0053"}, {Idref: "f_0054"}, {Idref: "f_0055"}, {Idref: "f_0056"}, {Idref: "f_0057"}, {Idref: "f_0058"}, {Idref: "f_0059"}, {Idref: "f_0060"}, {Idref: "f_0061"}, {Idref: "f_0062"}, {Idref: "f_0063"}}
-	by, _ := manifests.GenerateSpineSection(items)
-	fmt.Println(string(by))
+	manifests.GenerateSpineSection(writ, items)
+	writ.Flush()
+	println(string(out.Bytes()))
 }
 
 func TestNewContainer(t *testing.T) {
-	by, _ := manifests.NewContainer("content.opf")
-	fmt.Println(string(by))
+	buf := make([]byte, 1024)
+	out := bytes.NewBuffer(buf)
+	writ := bufio.NewWriter(out)
+	manifests.NewContainer(writ, "content.opf")
+	writ.Flush()
+	println(string(out.Bytes()))
 }
