@@ -26,7 +26,8 @@ type rootfile struct {
 func NewContainer(path string) ([]byte, error) {
 	container := container{
 		Version: "1.0",
-		Xmlns:   "urn:oasis:names:tc:opendocument:xmlns:container",
+		// Is this namespace required
+		Xmlns: "urn:oasis:names:tc:opendocument:xmlns:container",
 		Root: rootfiles{
 			IRoot: rootfile{
 				Fullpath:  path,
@@ -46,12 +47,37 @@ func NewContainer(path string) ([]byte, error) {
 // content.opf
 
 // metadata section of content.opf
-//
+
+var DublinCoreElements = [][]string{
+	// Required
+	{"identifier", "title", "language"},
+	// Optional
+	{"contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type"},
+}
+
 // Store all the data in map and then based on the key decide
 // if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
-func GenerateMetadateSection(items map[string]string) {
+func GenerateMetadateSection(items map[string]string) (buf []byte) {
+	buf = make([]byte, 0, 1000)
+	buf = append(buf, []byte("<metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">")...)
+	buf = append(buf, []byte("</metadata>")...)
+	for element, value := range items {
+		var data string
+		switch element {
+		case "identifier", "language", "title":
+			data = "<dc:" + element + ">" + value + "</dc:" + element + ">"
+		case "contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type":
 
+		default:
+		}
+		buf = append(buf, []byte(data)...)
+	}
+	return
 }
+
+func generateDublinCoreElements(element string, value string) {}
+
+// ------------------
 
 // Manifest Section of content.opf
 type ManifestItem struct {
@@ -61,6 +87,7 @@ type ManifestItem struct {
 	XMLName   struct{} `xml:"item"`
 }
 
+// TODO: TOC files needs a special it
 func GenerateManifestSection(items []ManifestItem) ([]byte, error) {
 	return generateSection("manifest", 1, items)
 }

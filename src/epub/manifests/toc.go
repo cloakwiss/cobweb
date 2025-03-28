@@ -63,7 +63,6 @@ func directoryTree(root string, dirlisting []string) Directory {
 	if len(processedDirs) == 0 {
 		processedDirs = nil
 	}
-
 	if len(processedFiles) == 0 {
 		processedFiles = nil
 	}
@@ -84,10 +83,9 @@ func MarshalToc(dir Directory, writeFile *bufio.Writer) {
 }
 
 func marshalToc(dir Directory, indent int, writeFile *bufio.Writer) {
-	space := "    "
-	l0 := strings.Repeat(space, indent+0)
-	l1 := strings.Repeat(space, indent+1)
-	l2 := strings.Repeat(space, indent+2)
+	l0 := strings.Repeat("\t", indent+0)
+	l1 := strings.Repeat("\t", indent+1)
+	l2 := strings.Repeat("\t", indent+2)
 
 	writeFile.WriteString(l0 + "<li>")
 	defer writeFile.WriteString(l0 + "</li>\n")

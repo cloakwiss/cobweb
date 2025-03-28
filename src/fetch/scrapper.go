@@ -173,21 +173,16 @@ func assetFilterByExtension(opts app.Options) func(string) bool {
 		parts = append(parts, ".js")
 	}
 	if opts.NoFonts {
-		parts = append(parts, ".woff2")
-		parts = append(parts, ".woff")
-		parts = append(parts, ".otf")
-		parts = append(parts, ".ttf")
-		// This will make thing very dicey
-		parts = append(parts, ".svg")
+		parts = append(parts, []string{
+			".woff2", ".woff", ".otf", ".ttf", ".svg",
+		}...)
 	}
 	if opts.NoImages {
-		parts = append(parts, ".png")
-		parts = append(parts, ".jpeg")
-		parts = append(parts, ".gif")
-		parts = append(parts, ".webp")
-		parts = append(parts, ".svg")
+		parts = append(parts, []string{
+			".png", ".jpeg", ".gif", ".webp", ".svg",
+		}...)
 	}
-	// Is it feasible to enumerate all the file formats here
+	// Is it feasible to enumerate all the container formats here
 	// if opts.Audio { }
 	// if opts.Video { }
 
@@ -204,6 +199,7 @@ func assetFilterByExtension(opts app.Options) func(string) bool {
 	}
 }
 
+// TODO: I forgot what this was supposed to do, need to find out
 func assetFilterByHeader(opts app.Options) {
 	if opts.NoCss {
 	}

@@ -19,6 +19,25 @@ func WriteTozip(pages map[string][]byte, outputZipFile string) {
 	// Create a new zip archive.
 	w := zip.NewWriter(buf)
 
+	// Adding mimetype file which should be the first in any epub
+	{
+		file := zip.FileHeader{
+			Name:    "mimetype",
+			Comment: "",
+			NonUTF8: true,
+			Method:  zip.Store,
+		}
+		f, err := w.CreateRaw(&file)
+		if err != nil {
+			log.Fatal(err)
+		}
+		f.Write([]byte("application/epub+zip"))
+	}
+	// Adding META-INF/container.xml which should be the second in epub
+	{
+		//TODO:
+	}
+
 	// Add some files to the archive.
 	for path, file := range pages {
 		if ishtml, newName := cleanHTML(path); ishtml {
