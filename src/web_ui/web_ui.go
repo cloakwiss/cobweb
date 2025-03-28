@@ -30,8 +30,9 @@ func Launch() {
 		HandleGetRequest("/index.html", writer, request)
 	})
 
-	router.Get("/styles.css", func(writer http.ResponseWriter, request *http.Request) {
-		HandleGetRequest("/styles.css", writer, request)
+	router.Get("/styles.css", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, "./public/styles.css")
+		w.Header().Set("Content-Type", "text/css")
 	})
 
 	router.Get("/script.js", func(writer http.ResponseWriter, request *http.Request) {

@@ -1,47 +1,152 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cobweb</title>
-    <link rel="stylesheet" href="styles.css">
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Cobweb</title>
+	<link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-    <div class="container">
-        <h1>Cobweb</h1>
-        <p>A Minimal and User-Friendly Website Archiver</p>
-        
-        <form id="archiveForm">
-			<h2>URLs</h2>
-			<input type="text" id="Targets" placeholder="Enter Target URLs (comma-separated)">
-			<input type="text" id="AllowDomains" placeholder="Allowed Domains (comma-separated)">
-			<input type="text" id="BlockDomains" placeholder="Blocked Domains (comma-separated)">
+	<div class="containor">
+		<h1 class="title">
+			<div class="container">
+				<a id="homePageLink" href="/">[COBWEB]</a>
+				: A Minimal and User-Friendly Website Archiver
+			</div>
+		</h1>
 
-            <h2>Filters</h2>
-            <div class="toggle-group">
-                <label><input type="checkbox" id="NoAudio"> No Audio</label>
-                <label><input type="checkbox" id="NoCss"> No CSS</label>
-                <label><input type="checkbox" id="NoIframe"> No Iframe</label>
-                <label><input type="checkbox" id="NoFonts"> No Fonts</label>
-                <label><input type="checkbox" id="NoJs"> No JavaScript</label>
-                <label><input type="checkbox" id="NoImages"> No Images</label>
-                <label><input type="checkbox" id="NoVideo"> No Video</label>
-                <label><input type="checkbox" id="NoMetadata"> No Metadata</label>
-            </div>
+		<div class="pageBody">
 
-            <h2>Settings</h2>
-            <input type="text" id="Output" placeholder="Output Path">
-            <input type="text" id="Cookie" placeholder="Cookies">
-            <input type="number" id="Depth" placeholder="Depth (0-255)" min="0" max="255">
-            <!-- needs checking before adding this <input type="text" id="Mode" placeholder="Mode"> -->
-            <input type="number" id="Timeout" placeholder="Timeout (ms)" min="0">
+			<div class="left-box">
 
-            <button type="submit">Submit</button>
-        </form>
+				<div class="container">
+					<form id="archiveForm">
+						<table id="form-table">
+							<tr>
+								<div class="urls">
+									<td>
+										<label>[Urls]</label>
+									</td>
+									<td>
+										<table>
+											<tr>
+												<td><label for="Targets">Targets:</label></td>
+												<td><input type="text" id="Targets" placeholder="Enter Target URLs">
+												</td>
+											</tr>
+											<tr>
+												<td><label for="AllowDomains">Allowed Domains:</label></td>
+												<td><input type="text" id="AllowDomains" placeholder="Allowed Domains">
+												</td>
+											</tr>
+											<tr>
+												<td><label for="BlockDomains">Blocked Domains:</label></td>
+												<td><input type="text" id="BlockDomains" placeholder="Blocked Domains">
+												</td>
+											</tr>
+										</table>
+									</td>
+								</div>
+							</tr>
 
-        <div id="message"></div>
-    </div>
-    
-    <script src="script.js"></script>
+							<tr>
+								<div class="">
+									<td>
+										<label>[Filters]</label>
+									</td>
+									<td>
+										<table>
+											<tr>
+												<td><label><input type="checkbox" id="NoAudio"><span>[No
+															Audio]</span></label>
+												</td>
+												<td><label><input type="checkbox" id="NoCss"><span>[No
+															CSS]</span></label>
+												</td>
+												<td><label><input type="checkbox" id="NoIframe"><span>[No
+															Iframe]</span></label>
+												</td>
+											</tr>
+											<tr>
+												<td><label><input type="checkbox" id="NoFonts"><span>[No
+															Fonts]</span></label>
+												</td>
+												<td><label><input type="checkbox" id="NoJs"><span>[No
+															JavaScript]</span></label>
+												</td>
+												<td><label><input type="checkbox" id="NoImages"><span>[No
+															Images]</span></label>
+												</td>
+											</tr>
+											<tr>
+												<td><label><input type="checkbox" id="NoVideo"><span>[No
+															Video]</span></label>
+												</td>
+												<td><label><input type="checkbox" id="NoMetadata"><span>[No
+															Metadata]</span></label>
+												</td>
+												<td></td> <!-- Empty cell for balance -->
+											</tr>
+										</table>
+									</td>
+								</div>
+							</tr>
+
+							<tr>
+								<div class="">
+									<td>
+										<label>[Settings]</label>
+									</td>
+									<td>
+										<table>
+											<tr>
+												<td><label for="Output">Output Path:</label></td>
+												<td><input type="text" id="Output" placeholder="Output Path"></td>
+											</tr>
+											<tr>
+												<td><label for="Cookie">Cookies:</label></td>
+												<td><input type="text" id="Cookie" placeholder="Cookies"></td>
+											</tr>
+											<tr>
+												<td><label for="Depth">Depth (0-255):</label></td>
+												<td><input type="number" id="Depth" placeholder="Depth (0-255)" min="0"
+														max="255">
+												</td>
+											</tr>
+											<!-- <tr> -->
+											<!-- 	<td><label for="Mode">Mode:</label></td> -->
+											<!-- 	<td><input type="text" id="Mode" placeholder="Mode"></td> -->
+											<!-- </tr> -->
+											<tr>
+												<td><label for="Timeout">Timeout (ms):</label></td>
+												<td><input type="number" id="Timeout" placeholder="Timeout (ms)"
+														min="0">
+												</td>
+											</tr>
+										</table>
+									</td>
+								</div>
+							</tr>
+						</table>
+					</form>
+				</div>
+			</div>
+
+			<div class="right-box">
+				<div class="container">
+					<div class="form-group">
+						<input id="submitButton" type="submit" value="[Submit]">
+					</div>
+					<div id="message"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+	<script src="script.js"></script>
 </body>
+
 </html>
