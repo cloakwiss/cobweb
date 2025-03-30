@@ -78,8 +78,6 @@ func RunApp(args app.Options) Result {
 
 	return Result{
 		DownloadUrl: "/" + args.Output + ".zip",
-
-		// This needs to be the error messages unless we are going to use web socket shenanigans
-		Message: "Pokemon",
+		Message: "[Success]",
 	}
 }

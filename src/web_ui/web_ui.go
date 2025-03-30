@@ -10,7 +10,7 @@ import (
 	// "path/filepath"
 	"strings"
 
-	// "github.com/cloakwiss/cobweb/app"
+	"github.com/cloakwiss/cobweb/web_ui/messaging"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 )
@@ -53,6 +53,11 @@ func Launch() {
 	router.Post("/archive", func(writer http.ResponseWriter, request *http.Request) {
 		ArchiveRequest(writer, request)
 	})
+	// ---------------------------------------------------------------------------
+
+	// Handling messaging
+	// ---------------------------------------------------------------------------
+	router.HandleFunc("/messaging", messaging.HandleWebSocket)
 	// ---------------------------------------------------------------------------
 
 	// File server routing for being able to download archived epub
@@ -141,7 +146,13 @@ func ArchiveRequest(writer http.ResponseWriter, request *http.Request) {
 	args := WebOptToOpt(request_obj)
 	fmt.Println(args.String())
 
+	// This is where web socket should be initiated I guess
+	// -----------------------------------------------------------------
+	messaging.StartMessaging(writer)
 	result := RunApp(args)
+	messaging.EndMessaging()
+	// -----------------------------------------------------------------
+	// This is where it should end
 
 	response_bytes, resp_err := json.Marshal(result)
 	fmt.Println(string(response_bytes))

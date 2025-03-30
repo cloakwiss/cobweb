@@ -1,4 +1,5 @@
-const maxDepth = 3; 
+const maxDepth = 3;
+let socket;
 
 document.getElementById("archiveForm").addEventListener("submit", function(event) {
 	event.preventDefault(); // Prevent default form submission
@@ -22,6 +23,31 @@ document.getElementById("archiveForm").addEventListener("submit", function(event
 		Timeout: parseTimeOut(document.getElementById("Timeout").value)
 	};
 
+	// Web Socket Shenanigans
+	//------------------------------------------------------------------
+	if (socket) {
+		socket.close();  // Close any existing connection
+	}
+	socket = new WebSocket("ws://localhost:8080/messaging");
+
+	socket.onmessage = function(event) {
+		message_box = document.getElementById("message");
+		message_box.value = message_box.value + event.data;
+	};
+
+	socket.onopen = function() {
+		console.log("Connected to WebSocket server.");
+	};
+
+	socket.onerror = function(error) {
+		console.error("WebSocket Error:", error);
+	};
+
+	socket.onclose = function() {
+		console.log("WebSocket connection closed.");
+	};
+	//------------------------------------------------------------------
+
 	sendData(options);
 });
 
@@ -41,34 +67,40 @@ function parseDepth(value) {
 
 function parseTimeOut(value) {
 	let num = parseInt(value, 10);
-	if (isNaN(num) || num < 0) 0 : num;
+	if (isNaN(num) || num < 0) {
+		return 0
+	} else {
+		return num
+	}
 }
 
 function sendData(data) {
 	console.log("Sending data:", JSON.stringify(data, null, 2));
 
-	fetch('/archive', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		body: JSON.stringify(data)
-	})
-		.then(response => response.json())
-		.then(data => {
-			displayResponse(data);
+	setTimeout(() => {
+		fetch('/archive', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
 		})
-		.catch(error => {
-			console.error('Error:', error);
-			document.getElementById("message").innerHTML = `<p style="color: red;">An error occurred.</p>`;
-		});
+			.then(response => response.json())
+			.then(data => {
+				displayResponse(data);
+			})
+			.catch(error => {
+				console.error('Error:', error);
+				document.getElementById("message").innerHTML = `<p style="color: red;">An error occurred.</p>`;
+			});
+	}, 500);  // Slight delay to allow WebSocket connection
 }
 
 function displayResponse(data) {
 	const responseInput = document.getElementById("message");
 	const downloadButton = document.getElementById("downloadButton");
 
-	responseInput.value = data.Message || "[ERROR GETTING MESSAGE]"; // Set the text box value
+	responseInput.value = responseInput.value + (data.Message || "[ERROR GETTING MESSAGE]");
 
 
 	if (data.DownloadUrl) {
@@ -76,6 +108,4 @@ function displayResponse(data) {
 		downloadButton.innerText = "[Download File]";
 		downloadButton.setAttribute("download", "");
 	}
-
-	downloadButton.href = data.DownloadUrl; // Update download link
 }
