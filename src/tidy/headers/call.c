@@ -35,8 +35,8 @@ char *tidy_html(char *buff, uint64_t buff_size) {
         rc = tidySaveBuffer(tdoc, &output); // Pretty Print
 
     if (rc >= 0) {
-        if (rc > 0)
-            printf("\nDiagnostics:\n\n%s", errbuf.bp);
+        // if (rc > 0)
+        //     printf("\nDiagnostics:\n\n%s", errbuf.bp);
         // printf("\nAnd here is the result:\n\n%s", output.bp);
 
     } else {

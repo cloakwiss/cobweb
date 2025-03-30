@@ -1,5 +1,11 @@
 const maxDepth = 3;
 let socket;
+const textarea = document.getElementById("message");
+
+function scrollToBottom() {
+	textarea.scrollTop = textarea.scrollHeight;
+}
+
 
 document.getElementById("archiveForm").addEventListener("submit", function(event) {
 	event.preventDefault(); // Prevent default form submission
@@ -33,6 +39,7 @@ document.getElementById("archiveForm").addEventListener("submit", function(event
 	socket.onmessage = function(event) {
 		message_box = document.getElementById("message");
 		message_box.value = message_box.value + event.data;
+		scrollToBottom()
 	};
 
 	socket.onopen = function() {
@@ -101,7 +108,7 @@ function displayResponse(data) {
 	const downloadButton = document.getElementById("downloadButton");
 
 	responseInput.value = responseInput.value + (data.Message || "[ERROR GETTING MESSAGE]");
-
+	scrollToBottom()
 
 	if (data.DownloadUrl) {
 		downloadButton.href = data.DownloadUrl; // Set download link
@@ -109,3 +116,4 @@ function displayResponse(data) {
 		downloadButton.setAttribute("download", "");
 	}
 }
+

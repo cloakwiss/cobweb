@@ -16,11 +16,12 @@
 	width: 100%;
 	max-width: 100%;
 	/* Adjust as needed */
-	height: 60%;
-	max-height: 60%;
+	height: 80%;
+	max-height: 80%;
 	background: transparent;
 	color: #ffffff;
-	border: 1px solid #009900;
+	border: 2px solid #009900;
+	border-radius: 10px;
 	font-family: inherit;
 	font-size: 15px;
 	padding: 5px;
@@ -121,11 +122,11 @@ body {
 }
 
 .container {
-	border: 3px solid yellowgreen;
+	border: 2px solid yellowgreen;
 	padding: 20px;
 	height: 100%;
 	width: 100%;
-	border-radius: 10px;
+	border-radius: 7px;
 }
 
 img {
