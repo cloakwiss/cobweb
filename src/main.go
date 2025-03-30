@@ -1,11 +1,12 @@
 package main
 
 import (
+	"bufio"
+	"bytes"
 	"fmt"
-	"strings"
 
 	"github.com/cloakwiss/cobweb/app"
-	"github.com/cloakwiss/cobweb/epub/zip"
+	"github.com/cloakwiss/cobweb/epub/manifests"
 	"github.com/cloakwiss/cobweb/fetch"
 )
 
@@ -19,15 +20,21 @@ func main() {
 	}
 	fmt.Printf("Targets: %+v\n", args.Targets)
 
-	npages := make(map[string][]byte)
+	// npages := make(map[string][]byte)
 	{
 		pages := fetch.Scrapper(args.Targets[0], args)
 		for key, val := range pages {
-			// fmt.Printf("Page: %s\n", key.String())
+			fmt.Printf("Page: %s\n", key.String())
+			fmt.Printf("Data: %+v\n", val.MediaType)
 			// Pay attention to the extra `/` at the start of path
-			stripped := strings.TrimLeft(key.Path, "/")
-			npages[stripped] = val.Data
+			// stripped := strings.TrimLeft(key.Path, "/")
+			// npages[stripped] = val.Data
 		}
+		buf := make([]byte, 1024)
+		out := bytes.NewBuffer(buf)
+		writeBuffer := bufio.NewWriter(out)
+		manifests.GenerateContentOpf(writeBuffer, pages)
+		println(string(out.Bytes()))
 	}
-	zip.WriteTozip(npages, args.Output+".zip")
+	// zip.WriteTozip(npages, args.Output+".zip")
 }

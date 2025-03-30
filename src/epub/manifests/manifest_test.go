@@ -63,3 +63,13 @@ func TestNewContainer(t *testing.T) {
 	writ.Flush()
 	println(string(out.Bytes()))
 }
+
+func TestMetadata(t *testing.T) {
+	buf := make([]byte, 1024)
+	out := bytes.NewBuffer(buf)
+	writ := bufio.NewWriter(out)
+	items := map[string]string{"identifier": "Hello", "language": "en", "title": "Goodbye"}
+	manifests.GenerateMetadataSection(writ, items)
+	writ.Flush()
+	println(string(out.Bytes()))
+}

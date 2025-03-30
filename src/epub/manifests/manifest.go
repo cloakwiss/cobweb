@@ -4,6 +4,8 @@ import (
 	"bufio"
 	"encoding/xml"
 	"strings"
+
+	"github.com/cloakwiss/cobweb/fetch"
 )
 
 // Container.xml
@@ -23,7 +25,7 @@ type rootfile struct {
 	Mediatype string `xml:"media-type,attr"`
 }
 
-func NewContainer(writeBuffer *bufio.Writer, path string) ([]byte, error) {
+func NewContainer(writeBuffer *bufio.Writer, path string) error {
 	container := container{
 		Version: "1.0",
 		// Is this namespace required
@@ -36,59 +38,70 @@ func NewContainer(writeBuffer *bufio.Writer, path string) ([]byte, error) {
 		},
 	}
 	header := []byte(xml.Header)
-	by, er := xml.MarshalIndent(container, "", "  ")
-	if er == nil {
-		header = append(header, by...)
-		return header, nil
+	_, er := writeBuffer.Write(header)
+	if er != nil {
+		return er
 	}
-	return nil, er
+	by, er := xml.MarshalIndent(container, "", "  ")
+	if er != nil {
+		return er
+	}
+	_, er = writeBuffer.Write(by)
+	if er != nil {
+		return er
+	}
+	return nil
 }
 
 // content.opf
 
 // metadata section of content.opf
 
-var DublinCoreElements = [][]string{
-	// Required
-	{"identifier", "title", "language"},
-	// Optional
-	{"contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type"},
-}
+// var DublinCoreElements = [][]string{
+// 	// Required
+// 	{"identifier", "title", "language"},
+// 	// Optional
+// 	{"contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type"},
+// }
 
 // Store all the data in map and then based on the key decide
 // if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
-func GenerateMetadateSection(writeBuffer *bufio.Writer, items map[string]string) (er error) {
-	if _, er = writeBuffer.WriteString("<metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">"); er != nil {
-		return
-	}
-	if _, er = writeBuffer.WriteString("</metadata>"); er != nil {
+func GenerateMetadataSection(writeBuffer *bufio.Writer, items map[string]string) (er error) {
+	if _, er = writeBuffer.WriteString("<metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"); er != nil {
 		return
 	}
 	for element, value := range items {
 		var data string
 		switch element {
 		case "identifier", "language", "title":
-			data = "<dc:" + element + ">" + value + "</dc:" + element + ">"
+			data = "\t<dc:" + element + ">" + value + "</dc:" + element + ">\n"
 		case "contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type":
-
+			//TODO: this is incomplete and I have to figure out if mapping from html page's meta section can be mapped directly
 		default:
 		}
 		if _, er = writeBuffer.WriteString(data); er != nil {
 			return
 		}
 	}
+	if _, er = writeBuffer.WriteString("</metadata>\n"); er != nil {
+		return
+	}
+	writeBuffer.Flush()
 	return
 }
 
-func GeneratePackageStart(writeBuffer *bufio.Writer, uniqueId string) (er error) {
+// Please make sure to end the section with closing tag
+func GeneratePackageStart(writeBuffer *bufio.Writer, uniqueId string) (closing_tag []byte, er error) {
+	closing_tag = []byte("</package>")
 	if _, er = writeBuffer.WriteString("<package xmlns=\"http://www.idpf.org/2007/opf\" version=\"3.0\""); er != nil {
-		return
+		return nil, er
 	}
-	uid := " unique-identifier=\"" + uniqueId + "\">"
+	uid := " unique-identifier=\"" + uniqueId + "\">\n"
 	if _, er = writeBuffer.WriteString(uid); er != nil {
-		return
+		return nil, er
 	}
-	return nil
+	writeBuffer.Flush()
+	return closing_tag, nil
 }
 
 // ------------------
@@ -114,6 +127,54 @@ type SpineItem struct {
 
 func GenerateSpineSection(writeBuffer *bufio.Writer, items []SpineItem) error {
 	return generateSection(writeBuffer, "spine", 1, items)
+}
+
+const XhtmlMime string = "text/html; charset=utf-8"
+
+type ContentOpfMetaData struct {
+	// Both can be equal (as far as I understand)
+	uniqueId, title string
+	// We will use uuid as identifer
+	identifier string
+	// we need short hands like en, de, ru, jp, kr
+	language string
+}
+
+// Maybe the pages should be more refined which contains the more info
+func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata ContentOpfMetaData, pages fetch.PageTable) error {
+	closing, er := GeneratePackageStart(writeBuffer, mandatoryMetadata.uniqueId)
+	if er != nil {
+		return er
+	}
+	defer func() {
+		writeBuffer.Write(closing)
+		writeBuffer.Flush()
+	}()
+	GenerateMetadataSection(writeBuffer, map[string]string{
+		// Identifier should be uuid
+		"identifier": mandatoryMetadata.identifier,
+		"language":   mandatoryMetadata.language,
+		// Need to find out the the title of main page
+		"title": mandatoryMetadata.title,
+	})
+	manifestItems := make([]ManifestItem, 0, len(pages))
+	spineItems := make([]SpineItem, 0, len(pages))
+	for url, pagedata := range pages {
+		manifestItems = append(manifestItems, ManifestItem{
+			FileId:    url.EscapedPath(),
+			FilePath:  url.EscapedPath(),
+			MediaType: pagedata.MediaType,
+		})
+		if pagedata.MediaType == XhtmlMime {
+			spineItems = append(spineItems, SpineItem{
+				Idref:   url.EscapedPath(),
+				XMLName: struct{}{},
+			})
+		}
+	}
+	GenerateManifestSection(writeBuffer, manifestItems)
+	GenerateSpineSection(writeBuffer, spineItems)
+	return nil
 }
 
 // General Functions
@@ -161,6 +222,7 @@ func generateSection[S ManifestItem | SpineItem](writeBuffer *bufio.Writer, sect
 		if _, err := writeBuffer.WriteRune('\n'); err != nil {
 			return err
 		}
+		writeBuffer.Flush()
 
 	}
 
@@ -170,6 +232,6 @@ func generateSection[S ManifestItem | SpineItem](writeBuffer *bufio.Writer, sect
 	if _, err := writeBuffer.Write(end); err != nil {
 		return err
 	}
-
+	writeBuffer.Flush()
 	return nil
 }

@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"fmt"
+	"mime"
 	"net/url"
 	"strings"
 
@@ -89,13 +90,19 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 	collector.OnResponse(func(res *colly.Response) {
 		_, found := pagesContents[*res.Request.URL]
 		if !found {
+			var ext string
+			{
+				uri := res.Request.URL.String()
+				n := strings.LastIndexAny(uri, ".")
+				ext = uri[n:]
+			}
 			pagesContents[*res.Request.URL] = Page{
 				Data: res.Body,
 				// Assign this properly
 				Metadata: Metadata{
 					//TODO: Title is only possible for HTML so what should be title other things
 					Title:     "",
-					MediaType: strings.Join((*res.Headers)["Content-Type"], " "),
+					MediaType: mime.TypeByExtension(ext),
 				},
 			}
 			// size, err := strconv.ParseUint(res.Headers.Get("Content-Length"), 10, 32)
@@ -159,6 +166,11 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 	//-------------------------------------------------------
 	return pagesContents
 }
+
+// func getHtmlTitle(htmlBytes []byte) string {
+// 	title := goquery.Single("title")
+// 	goquery.NewDocumentFromReader(htmlBytes)
+// }
 
 // This function will produce the pattern to match for html handler
 // based on arguments given, this is desgined to be called once only
