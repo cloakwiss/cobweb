@@ -10,7 +10,7 @@ import (
 // This test won't run unless the dll/shared object for tidy is in the same
 // folder as this package
 func TestTidyHTML(t *testing.T) {
-	input := []byte("<html><head><title>Test</title></head><body><p>Test</p></body></html>")
+	input := []byte("<html><head><title>Test</title></head><body><rustdoc>pokemon</rustdoc><p>Test</p></body></html>")
 	output := tidy.TidyHTML(input)
 
 	fmt.Println(string(output))
