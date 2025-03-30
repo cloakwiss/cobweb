@@ -1,17 +1,19 @@
 package fetch
 
 import (
-	"fmt"
+	"bytes"
+	"log"
 	"net/url"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/app"
 	"github.com/gocolly/colly"
+	"golang.org/x/net/html"
 )
 
-type PageTable map[url.URL]Page
+type PageTable map[url.URL]Asset
 
-type Page struct {
+type Asset struct {
 	Data []byte
 	Metadata
 }
@@ -74,7 +76,7 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		fmt.Println("Visiting", r.URL.String())
+		// fmt.Println("Visiting", r.URL.String())
 	})
 
 	//TODO: this cannot be left empty so what to do here
@@ -89,26 +91,21 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 	collector.OnResponse(func(res *colly.Response) {
 		_, found := pagesContents[*res.Request.URL]
 		if !found {
-			// var ext string
-			// {
-			// 	uri := res.Request.URL.String()
-			// 	n := strings.LastIndexAny(uri, ".")
-			// 	ext = uri[n:]
-			// }
-			pagesContents[*res.Request.URL] = Page{
+			pagesContents[*res.Request.URL] = Asset{
 				Data: res.Body,
 				// Assign this properly
 				Metadata: Metadata{
 					//TODO: Title is only possible for HTML so what should be title other things
 					Title:     "",
-					MediaType: "", //mime.TypeByExtension(ext),
+					MediaType: res.Headers.Get("content-type"),
 				},
 			}
 			// size, err := strconv.ParseUint(res.Headers.Get("Content-Length"), 10, 32)
 			// if err != nil {
 			// 	size = 0
 			// }
-			fmt.Printf("On page: %v\n", res.Request.URL)
+			// fmt.Printf("On page: %v\n", res.Request.URL)
+			// fmt.Printf("Page Headers: %+v\n", res.Headers)
 		}
 	})
 
@@ -252,4 +249,67 @@ func stringOfURL(urls []url.URL) []string {
 		}
 	}
 	return parsed
+}
+
+type PageMetadata struct {
+	Title string
+	Other map[string][]string
+}
+
+func GetMetaData(buf *bytes.Buffer) PageMetadata {
+	doc, err := html.Parse(buf)
+	if err != nil {
+		log.Fatalln("Error parsing HTML:", err)
+	}
+
+	head := findHead(doc)
+	if head == nil {
+		log.Fatalln("Cannot find head.")
+	}
+	return processHeadElements(head)
+}
+
+// Function to find the head element
+func findHead(n *html.Node) *html.Node {
+	if n.Type == html.ElementNode && n.Data == "head" {
+		return n
+	}
+
+	for c := n.FirstChild; c != nil; c = c.NextSibling {
+		if result := findHead(c); result != nil {
+			return result
+		}
+	}
+
+	return nil
+}
+
+// Function to process elements inside head
+func processHeadElements(head *html.Node) PageMetadata {
+	data := PageMetadata{
+		Other: make(map[string][]string),
+	}
+
+	for child := head.FirstChild; child != nil; child = child.NextSibling {
+		if child.Type == html.ElementNode {
+
+			// // Print attributes if any
+			if len(child.Attr) > 0 {
+				for _, attr := range child.Attr {
+					_, found := data.Other[attr.Key]
+					if found {
+						data.Other[attr.Key] = append(data.Other[attr.Key], attr.Val)
+					} else {
+						data.Other[attr.Key] = []string{attr.Val}
+					}
+				}
+			}
+
+			// If it's a title element, print its content
+			if child.Data == "title" && child.FirstChild != nil {
+				data.Title = child.FirstChild.Data
+			}
+		}
+	}
+	return data
 }

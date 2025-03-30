@@ -4,8 +4,6 @@ import (
 	"bufio"
 	"encoding/xml"
 	"strings"
-
-	"github.com/cloakwiss/cobweb/fetch"
 )
 
 // Container.xml
@@ -131,51 +129,51 @@ func GenerateSpineSection(writeBuffer *bufio.Writer, items []SpineItem) error {
 
 const XhtmlMime string = "text/html; charset=utf-8"
 
-type ContentOpfMetaData struct {
-	// Both can be equal (as far as I understand)
-	uniqueId, title string
-	// We will use uuid as identifer
-	identifier string
-	// we need short hands like en, de, ru, jp, kr
-	language string
-}
+// type ContentOpfMetaData struct {
+// 	// Both can be equal (as far as I understand)
+// 	uniqueId, title string
+// 	// We will use uuid as identifer
+// 	identifier string
+// 	// we need short hands like en, de, ru, jp, kr
+// 	language string
+// }
 
 // Maybe the pages should be more refined which contains the more info
-func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata ContentOpfMetaData, pages fetch.PageTable) error {
-	closing, er := GeneratePackageStart(writeBuffer, mandatoryMetadata.uniqueId)
-	if er != nil {
-		return er
-	}
-	defer func() {
-		writeBuffer.Write(closing)
-		writeBuffer.Flush()
-	}()
-	GenerateMetadataSection(writeBuffer, map[string]string{
-		// Identifier should be uuid
-		"identifier": mandatoryMetadata.identifier,
-		"language":   mandatoryMetadata.language,
-		// Need to find out the the title of main page
-		"title": mandatoryMetadata.title,
-	})
-	manifestItems := make([]ManifestItem, 0, len(pages))
-	spineItems := make([]SpineItem, 0, len(pages))
-	for url, pagedata := range pages {
-		manifestItems = append(manifestItems, ManifestItem{
-			FileId:    url.EscapedPath(),
-			FilePath:  url.EscapedPath(),
-			MediaType: pagedata.MediaType,
-		})
-		if pagedata.MediaType == XhtmlMime {
-			spineItems = append(spineItems, SpineItem{
-				Idref:   url.EscapedPath(),
-				XMLName: struct{}{},
-			})
-		}
-	}
-	GenerateManifestSection(writeBuffer, manifestItems)
-	GenerateSpineSection(writeBuffer, spineItems)
-	return nil
-}
+// func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata fetch.PageMetadata, assets process.AllAssets) error {
+// 	closing, er := GeneratePackageStart(writeBuffer, mandatoryMetadata.Title)
+// 	if er != nil {
+// 		return er
+// 	}
+// 	defer func() {
+// 		writeBuffer.Write(closing)
+// 		writeBuffer.Flush()
+// 	}()
+// 	// GenerateMetadataSection(writeBuffer, map[string]string{
+// 	// 	// Identifier should be uuid
+// 	// 	"identifier": mandatoryMetadata.identifier,
+// 	// 	"language":   mandatoryMetadata.language,
+// 	// 	// Need to find out the the title of main page
+// 	// 	"title": mandatoryMetadata.title,
+// 	// })
+// 	manifestItems := make([]ManifestItem, 0, len(assets.Asssets)+len(assets.XhtmlPages))
+// 	spineItems := make([]SpineItem, 0, len(assets.XhtmlPages))
+// 	for url, pagedata := range assets.AllAssetStore {
+// 		manifestItems = append(manifestItems, ManifestItem{
+// 			FileId:    url.EscapedPath(),
+// 			FilePath:  url.EscapedPath(),
+// 			MediaType: pagedata.MediaType,
+// 		})
+// 		if pagedata.MediaType == XhtmlMime {
+// 			spineItems = append(spineItems, SpineItem{
+// 				Idref:   url.EscapedPath(),
+// 				XMLName: struct{}{},
+// 			})
+// 		}
+// 	}
+// 	GenerateManifestSection(writeBuffer, manifestItems)
+// 	// GenerateSpineSection(writeBuffer, spineItems)
+// 	return nil
+// }
 
 // General Functions
 
