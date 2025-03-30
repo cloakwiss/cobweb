@@ -18,12 +18,14 @@ const (
 
 type Options struct {
 	// Need to work out on how to handle metatdata
-	NoAudio, NoCss, NoIframe, NoFonts, NoJs, NoImages, NoVideo, NoMetadata bool
-	Targets, AllowDomains, BlockDomains                                    []url.URL
-	Output, Cookie                                                         string
-	Depth                                                                  uint8
-	Mode                                                                   Mode
-	Timeout                                                                time.Duration
+	NoAudio, NoCss, NoFonts, NoJs, NoImages, NoVideo bool
+	Targets                                          url.URL
+	AllowDomains, BlockDomains                       []url.URL
+	Output, Cookie                                   string
+	Depth                                            uint8
+	Timeout                                          time.Duration
+	// NoIframe, NoMetadata                             bool
+	// Mode
 }
 
 func addURLs(raw []string) []url.URL {
@@ -58,7 +60,7 @@ func Args() Options {
 				ur, err := url.Parse(arg[0])
 				// fmt.Printf("Parsed: %+v\n", ur)
 				if err == nil {
-					args.Targets = append(args.Targets, *ur)
+					args.Targets = *ur
 				} else {
 					panic(err)
 				}
@@ -80,11 +82,12 @@ func Args() Options {
 	rootCmd.Flags().BoolVarP(&args.NoFonts, "no-fonts", "f", false, "Remove fonts")
 	rootCmd.Flags().BoolVarP(&args.NoAudio, "no-audio", "a", false, "Remove audio sources")
 	rootCmd.Flags().BoolVarP(&args.NoVideo, "no-video", "V", false, "Remove video sources")
-	rootCmd.Flags().BoolVarP(&args.NoMetadata, "no-metadata", "m", false, "Exclude timestamp and source information")
-	//TODO: Check if this is possible in EPUB
+	// Cannot do this if we plan to make epub
+	// rootCmd.Flags().BoolVarP(&args.NoMetadata, "no-metadata", "m", false, "Exclude timestamp and source information")
+	// TODO: Check if this is possible in EPUB
 	// rootCmd.Flags().BoolP("no-frames", "F", false, "Remove frames and iframes")
 
-	//TODO: Will need Need to lookup these flags' behaviour
+	// TODO: Will need Need to lookup these flags' behaviour
 	// rootCmd.Flags().BoolP("ignore-errors", "e", false, "Ignore network errors")
 	// rootCmd.Flags().BoolP("isolate", "I", false, "Cut off document from the Internet")
 	// rootCmd.Flags().BoolP("insecure", "k", false, "Allow invalid X.509 (TLS) certificates")

@@ -30,7 +30,7 @@ func main() {
 			// stripped := strings.TrimLeft(key.Path, "/")
 			// npages[stripped] = val.Data
 		}
-		buf := make([]byte, 1024)
+		buf := make([]byte, 1024*3)
 		out := bytes.NewBuffer(buf)
 		writeBuffer := bufio.NewWriter(out)
 		manifests.GenerateContentOpf(writeBuffer, pages)
