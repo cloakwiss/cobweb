@@ -17,32 +17,35 @@
 			</div>
 		</h1>
 
-		<div class="pageBody">
+		<form id="archiveForm">
+			<div class="pageBody">
 
-			<div class="left-box">
+				<div class="left-box">
 
-				<div class="container">
-					<form id="archiveForm">
+					<div class="container">
 						<table id="form-table">
 							<tr>
 								<div class="urls">
 									<td>
-										<label>[Urls]</label>
+										<label>[Urls]: [comma seperated]</label>
 									</td>
 									<td>
 										<table>
 											<tr>
-												<td><label for="Targets">Targets:</label></td>
+												<td><label
+														for="Targets">[Targets]:</label></td>
 												<td><input type="text" id="Targets" placeholder="Enter Target URLs">
 												</td>
 											</tr>
 											<tr>
-												<td><label for="AllowDomains">Allowed Domains:</label></td>
+												<td><label
+														for="AllowDomains">[Allowed Domains]:</label></td>
 												<td><input type="text" id="AllowDomains" placeholder="Allowed Domains">
 												</td>
 											</tr>
 											<tr>
-												<td><label for="BlockDomains">Blocked Domains:</label></td>
+												<td><label
+														for="BlockDomains">[Blocked Domains]:</label></td>
 												<td><input type="text" id="BlockDomains" placeholder="Blocked Domains">
 												</td>
 											</tr>
@@ -102,15 +105,17 @@
 									<td>
 										<table>
 											<tr>
-												<td><label for="Output">Output Path:</label></td>
+												<td><label for="Output">[Output
+														Path]:</label></td>
 												<td><input type="text" id="Output" placeholder="Output Path"></td>
 											</tr>
 											<tr>
-												<td><label for="Cookie">Cookies:</label></td>
+												<td><label
+														for="Cookie">[Cookies]:</label></td>
 												<td><input type="text" id="Cookie" placeholder="Cookies"></td>
 											</tr>
 											<tr>
-												<td><label for="Depth">Depth (0-255):</label></td>
+												<td><label for="Depth">[Depth] (0-255):</label></td>
 												<td><input type="number" id="Depth" placeholder="Depth (0-255)" min="0"
 														max="255">
 												</td>
@@ -120,7 +125,8 @@
 											<!-- 	<td><input type="text" id="Mode" placeholder="Mode"></td> -->
 											<!-- </tr> -->
 											<tr>
-												<td><label for="Timeout">Timeout (ms):</label></td>
+												<td><label
+														for="Timeout">[Timeout] (ms):</label></td>
 												<td><input type="number" id="Timeout" placeholder="Timeout (ms)"
 														min="0">
 												</td>
@@ -130,19 +136,23 @@
 								</div>
 							</tr>
 						</table>
-					</form>
-				</div>
-			</div>
-
-			<div class="right-box">
-				<div class="container">
-					<div class="form-group">
-						<input id="submitButton" type="submit" value="[Submit]">
 					</div>
-					<div id="message"></div>
 				</div>
+
+				<div class="right-box">
+					<div class="container">
+						<div class="form-group">
+							<p>
+								<input id="submitButton" type="submit" value="[SUBMIT]">
+								<a id="downloadButton"></a>
+							</p>
+						</div>
+						<input id="message" type="text" readonly value="[message box]">
+					</div>
+				</div>
+
 			</div>
-		</div>
+		</form>
 	</div>
 
 
