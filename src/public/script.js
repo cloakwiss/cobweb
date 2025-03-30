@@ -1,36 +1,47 @@
+const maxDepth = 3; 
+
 document.getElementById("archiveForm").addEventListener("submit", function(event) {
 	event.preventDefault(); // Prevent default form submission
 
 	const options = {
 		NoAudio: document.getElementById("NoAudio").checked,
 		NoCss: document.getElementById("NoCss").checked,
-		NoIframe: document.getElementById("NoIframe").checked,
+		// NoIframe: document.getElementById("NoIframe").checked,
 		NoFonts: document.getElementById("NoFonts").checked,
 		NoJs: document.getElementById("NoJs").checked,
 		NoImages: document.getElementById("NoImages").checked,
 		NoVideo: document.getElementById("NoVideo").checked,
-		NoMetadata: document.getElementById("NoMetadata").checked,
+		// NoMetadata: document.getElementById("NoMetadata").checked,
 		Targets: document.getElementById("Targets").value.trim(),
 		AllowDomains: document.getElementById("AllowDomains").value.trim(),
 		BlockDomains: document.getElementById("BlockDomains").value.trim(),
 		Output: document.getElementById("Output").value.trim(),
 		Cookie: document.getElementById("Cookie").value.trim(),
-		Depth: parseUint8(document.getElementById("Depth").value),
+		Depth: parseDepth(document.getElementById("Depth").value),
 		// Mode: document.getElementById("Mode").value.trim(),
-		Timeout: parseUint64(document.getElementById("Timeout").value)
+		Timeout: parseTimeOut(document.getElementById("Timeout").value)
 	};
 
 	sendData(options);
 });
 
-function parseUint8(value) {
+function parseDepth(value) {
 	let num = parseInt(value, 10);
-	return isNaN(num) || num < 0 || num > 255 ? 0 : num;
+	if (isNaN(num) || num < 0 || num > 255) {
+		return 0;
+	} else {
+		if (num > maxDepth) {
+			alert(`We suggest maximum depth of ${maxDepth} if your intention is get tangible epub document.`);
+			return 0;
+		} else {
+			return num;
+		}
+	};
 }
 
-function parseUint64(value) {
+function parseTimeOut(value) {
 	let num = parseInt(value, 10);
-	return isNaN(num) || num < 0 ? 0 : num;
+	if (isNaN(num) || num < 0) 0 : num;
 }
 
 function sendData(data) {
