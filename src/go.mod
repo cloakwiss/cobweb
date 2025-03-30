@@ -5,10 +5,10 @@ go 1.24.1
 require (
 	github.com/gocolly/colly v1.2.0
 	github.com/spf13/cobra v1.9.1
-	github.com/PuerkitoBio/goquery v1.10.2
 )
 
 require (
+	github.com/PuerkitoBio/goquery v1.10.2 // indirect
 	github.com/andybalholm/cascadia v1.3.3 // indirect
 	github.com/antchfx/htmlquery v1.3.4 // indirect
 	github.com/antchfx/xmlquery v1.4.4 // indirect
