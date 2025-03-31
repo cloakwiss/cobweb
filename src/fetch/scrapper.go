@@ -2,7 +2,6 @@ package fetch
 
 import (
 	"bytes"
-	"fmt"
 	"log"
 	"net/url"
 	"strings"
@@ -55,11 +54,12 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 	println("Depth: ", argu.Depth)
 
 	rawAllowDomains := []url.URL{target}
+	allowDomains := []string{}
 	if len(argu.AllowDomains) > 0 {
 		rawAllowDomains = append(rawAllowDomains, argu.AllowDomains...)
+		allowDomains = stringOfURL(rawAllowDomains)
+		println("AllowedDomains: ", allowDomains)
 	}
-	allowDomains := stringOfURL(rawAllowDomains)
-	println("AllowedDomains: ", allowDomains[0])
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
@@ -77,7 +77,7 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		fmt.Println("Visiting", r.URL.String())
+		log.Println("Visiting", r.URL.String())
 	})
 
 	//TODO: this cannot be left empty so what to do here
@@ -104,8 +104,7 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 			// if err != nil {
 			// 	size = 0
 			// }
-			fmt.Printf("On page: %v\n", res.Request.URL)
-			// fmt.Printf("Page Headers: %+v\n", res.Headers)
+			log.Printf("On page: %v\n", res.Request.URL)
 		}
 	})
 

@@ -3,7 +3,9 @@ module github.com/cloakwiss/cobweb
 go 1.24.1
 
 require (
+	github.com/go-chi/chi/v5 v5.2.1
 	github.com/gocolly/colly v1.2.0
+	github.com/gorilla/websocket v1.5.3
 	github.com/spf13/cobra v1.9.1
 	golang.org/x/net v0.35.0
 )
