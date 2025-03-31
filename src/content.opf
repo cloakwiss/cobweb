@@ -1,0 +1,13 @@
+<package xmlns="http://www.idpf.org/2007/opf" version="3.0" unique-identifier="HTML: HyperText Markup Language | MDN">
+  <metadata xmlns:opf="http://www.idpf.org/2007/opf" xmlns:dc="http://purl.org/dc/elements/1.1/">
+    <dc:identifier>urn:uuid:A1B0D67E-2E81-4DF5-9E67-A64CBE366809</dc:identifier>
+    <dc:language>en</dc:language>
+    <dc:title>HTML: HyperText Markup Language | MDN</dc:title>
+</metadata>
+  <manifest>
+    <item id="en-US/docs/Web/HTML" href="en-US/docs/Web/HTML" media-type="text/html"/>
+    <item id="nav" href="nav.xhtml" media-type="application/xhtml+xml"/>
+  </manifest>
+  <spine>
+  </spine>
+</package>

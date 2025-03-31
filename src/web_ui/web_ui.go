@@ -20,6 +20,7 @@ const PUBLIC_PREFIX = "./public"
 
 // THIS ENTIRE THING NEEDS PROPER LOGGING
 func Launch() {
+	println("Running on: localhost", DOMAIN)
 	router := chi.NewRouter()
 
 	router.Use(middleware.Logger)

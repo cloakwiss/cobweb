@@ -24,7 +24,7 @@ func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 		assets                  = make([]string, len(allAssets))
 		allAssetsStore          = make(map[string]fetch.Asset)
 		xhtmlMime               = mime.TypeByExtension(".xhtml")
-		htmlMime                = mime.TypeByExtension(".html") // Also pay attention to encoding
+		htmlMime                = "text/html" // Also pay attention to encoding
 	)
 	keys := make([]url.URL, 0, len(allAssets))
 	for u := range allAssets {
@@ -36,7 +36,12 @@ func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 
 	for _, uri := range keys {
 		data := allAssets[uri]
-		path := strings.TrimLeft(uri.EscapedPath(), "/")
+		path := strings.TrimPrefix(uri.EscapedPath(), "/")
+		// minor hack
+		if strings.HasSuffix(path, "/") {
+			path = strings.TrimSuffix(path, "/")
+			path += ".html"
+		}
 
 		if strings.Contains(data.MediaType, htmlMime) {
 			xhtml := tidy.TidyHTML(data.Data)
@@ -72,14 +77,19 @@ func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 }
 
 func newName(path string) string {
-	if strings.HasSuffix(path, "html") {
-		newName, found := strings.CutSuffix(path, "html")
+	if strings.HasSuffix(path, ".html") {
+		newName, found := strings.CutSuffix(path, ".html")
 		if found {
-			newName += "xhtml"
+			newName += ".xhtml"
 			return newName
 		} else {
 			log.Fatal("Unreachable")
 		}
 	}
-	return path + ".xhtml"
+	if strings.HasSuffix(path, "/") {
+		path = strings.TrimSuffix(path, "/")
+		return path + ".xhtml"
+	}
+	log.Fatalln("Should be Unreachable.")
+	return ""
 }

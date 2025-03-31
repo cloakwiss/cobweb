@@ -80,7 +80,7 @@ func directoryTree(root string, dirlisting []string) Directory {
 }
 
 func GenerateDirectoryTree(fileslist []string) Directory {
-	return directoryTree("", fileslist)
+	return directoryTree("root", fileslist)
 }
 
 func MarshalToc(dir Directory, writeBuffer *bufio.Writer) {
@@ -89,17 +89,20 @@ func MarshalToc(dir Directory, writeBuffer *bufio.Writer) {
 		`<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" xmlns:epub="http://www.idpf.org/2007/ops">`,
 		"  <body>",
 		"    <nav epub:type=\"toc\">",
+		"      <h1>Table of Contents</h1>",
+		"      <ol>",
 	}
 	footer := []string{
+		"      </ol>",
 		"    </nav>",
-		"  <body>",
+		"  </body>",
 		"</html>",
 	}
 	for _, l := range header {
 		writeBuffer.WriteString(l + "\n")
 	}
 	writeBuffer.Flush()
-	marshalToc(dir, 3, writeBuffer)
+	marshalToc(dir, 5, writeBuffer)
 	for _, l := range footer {
 		writeBuffer.WriteString(l + "\n")
 	}

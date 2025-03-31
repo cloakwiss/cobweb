@@ -5,6 +5,7 @@ import (
 	"bytes"
 	"log"
 	"os"
+	"time"
 )
 
 type Pair struct {
@@ -23,12 +24,13 @@ func WriteTozip(pages []Pair, outputZipFile string) {
 
 	// Adding mimetype file which should be the first in any epub
 
-	/*{
+	{
 		file := zip.FileHeader{
 			Name:               "mimetype",
 			Comment:            "",
 			NonUTF8:            true,
 			Method:             zip.Store,
+			Modified:           time.Now(),
 			CRC32:              749429103,
 			CompressedSize:     20,
 			UncompressedSize:   20,
@@ -43,7 +45,7 @@ func WriteTozip(pages []Pair, outputZipFile string) {
 		if err != nil {
 			log.Fatal(err)
 		}
-	}*/
+	}
 
 	// Add some files to the archive.
 	for _, pair := range pages {
