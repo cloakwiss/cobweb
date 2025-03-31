@@ -1,43 +1,21 @@
 package main
 
 import (
-	"fmt"
+	"log"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea"
-
 	"github.com/cloakwiss/cobweb/app"
-	"github.com/cloakwiss/cobweb/app/ui"
-	"github.com/cloakwiss/cobweb/epub/zip"
-	"github.com/cloakwiss/cobweb/fetch"
+	"github.com/cloakwiss/cobweb/app/core"
+	"github.com/cloakwiss/cobweb/web_ui"
 )
 
 func main() {
-	args := app.Args()
-	// fmt.Printf("%+v", args)
-	iChan := make(chan app.ApMsg, 1000)
-
-	if len(args.Targets) == 0 {
-		println("Early exit")
-		return
+	// Fine for now, I think so
+	if len(os.Args) > 1 {
+		args := app.Args()
+		output_name := core.Launch(args)
+		log.Panicln("The output file: %s\n", output_name)
+	} else {
+		web_ui.Launch()
 	}
-	// fmt.Printf("Targets: %+v\n", args.Targets)
-
-	go func() {
-		pages := fetch.Scrapper(args.Targets[0], args, iChan)
-		npages := make(map[string][]byte)
-		for key, val := range pages {
-			// fmt.Printf("Page: %s\n", key.String())
-			// Pay attention to the extra `/` at the start of path
-			npages[key.Path] = val
-		}
-		zip.WriteTozip(npages, args.Output+".zip")
-	}()
-
-	model := ui.NewModel(iChan)
-	if _, err := tea.NewProgram(model).Run(); err != nil {
-		fmt.Println("Error running program:", err)
-		os.Exit(1)
-	}
-
 }

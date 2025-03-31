@@ -3,6 +3,8 @@ package app
 import (
 	"net/url"
 	"time"
+	"fmt"
+	"strings"
 
 	"github.com/spf13/cobra"
 )
@@ -17,21 +19,66 @@ const (
 )
 
 type Options struct {
-	// exclude the following or not
-	Audio, Css, Iframe, Fonts, Js, Images, Video, Metadata bool
-	Targets, AllowDomains, BlockDomains                    []url.URL
-	Output, Cookie                                         string
-	Depth                                                  uint8
-	Mode                                                   Mode
-	Timeout                                                time.Duration
+	// Need to work out on how to handle metatdata
+	NoAudio, NoCss, NoFonts, NoJs, NoImages, NoVideo bool
+	Targets                                          url.URL
+	AllowDomains, BlockDomains                       []url.URL
+	Output, Cookie                                   string
+	Depth                                            uint8
+	Timeout                                          time.Duration
+	// NoIframe, NoMetadata                             bool
+	// Mode
 }
 
-func addURLs(raw []string) []url.URL {
+// Needed for logging capablities
+func (o Options) String() string {
+	flags := []string{}
+	if o.NoAudio {
+		flags = append(flags, "NoAudio")
+	}
+	if o.NoCss {
+		flags = append(flags, "NoCss")
+	}
+	if o.NoFonts {
+		flags = append(flags, "NoFonts")
+	}
+	if o.NoJs {
+		flags = append(flags, "NoJs")
+	}
+	if o.NoImages {
+		flags = append(flags, "NoImages")
+	}
+	if o.NoVideo {
+		flags = append(flags, "NoVideo")
+	}
+
+	joinURLs := func(urls []url.URL) string {
+		parts := make([]string, len(urls))
+		for i, u := range urls {
+			parts[i] = u.String()
+		}
+		return strings.Join(parts, ", ")
+	}
+
+	return fmt.Sprintf(
+		"Flags: [%s]\nTarget: [%s]\nAllowDomains: [%s]\nBlockDomains: [%s]\nOutput: %q\nCookie: %q\nDepth: %d\nTimeout: %s",
+		strings.Join(flags, ", "),
+		o.Targets.String(),
+		joinURLs(o.AllowDomains),
+		joinURLs(o.BlockDomains),
+		o.Output,
+		o.Cookie,
+		o.Depth,
+		o.Timeout,
+	)
+}
+
+func AddUrls(raw []string) []url.URL {
 	// log.Printf("Input: %+v", *to)
 	// defer log.Printf("Output: %+v", *to)
 	parsed := make([]url.URL, 0, len(raw))
 	for _, ur := range raw {
-		u, err := url.Parse(ur)
+		u, err := url.Parse(strings.TrimSpace(ur))
 		if err != nil {
 			return nil
 		}
@@ -58,7 +105,7 @@ func Args() Options {
 				ur, err := url.Parse(arg[0])
 				// fmt.Printf("Parsed: %+v\n", ur)
 				if err == nil {
-					args.Targets = append(args.Targets, *ur)
+					args.Targets = *ur
 				} else {
 					panic(err)
 				}
@@ -74,17 +121,18 @@ func Args() Options {
 
 	// Copied from monolith => Maybe reorder it a bit
 	// Exclusion flags for various elements
-	rootCmd.Flags().BoolVarP(&args.Js, "no-js", "j", false, "Remove JavaScript")
-	rootCmd.Flags().BoolVarP(&args.Css, "no-css", "c", false, "Remove CSS")
-	rootCmd.Flags().BoolVarP(&args.Images, "no-images", "i", false, "Remove images")
-	rootCmd.Flags().BoolVarP(&args.Fonts, "no-fonts", "f", false, "Remove fonts")
-	rootCmd.Flags().BoolVarP(&args.Audio, "no-audio", "a", false, "Remove audio sources")
-	rootCmd.Flags().BoolVarP(&args.Video, "no-video", "V", false, "Remove video sources")
-	rootCmd.Flags().BoolVarP(&args.Metadata, "no-metadata", "m", false, "Exclude timestamp and source information")
-	//TODO: Check if this is possible in EPUB
+	rootCmd.Flags().BoolVarP(&args.NoJs, "no-js", "j", false, "Remove JavaScript")
+	rootCmd.Flags().BoolVarP(&args.NoCss, "no-css", "c", false, "Remove CSS")
+	rootCmd.Flags().BoolVarP(&args.NoImages, "no-images", "i", false, "Remove images")
+	rootCmd.Flags().BoolVarP(&args.NoFonts, "no-fonts", "f", false, "Remove fonts")
+	rootCmd.Flags().BoolVarP(&args.NoAudio, "no-audio", "a", false, "Remove audio sources")
+	rootCmd.Flags().BoolVarP(&args.NoVideo, "no-video", "V", false, "Remove video sources")
+	// Cannot do this if we plan to make epub
+	// rootCmd.Flags().BoolVarP(&args.NoMetadata, "no-metadata", "m", false, "Exclude timestamp and source information")
+	// TODO: Check if this is possible in EPUB
 	// rootCmd.Flags().BoolP("no-frames", "F", false, "Remove frames and iframes")
 
-	//TODO: Will need Need to lookup these flags' behaviour
+	// TODO: Will need Need to lookup these flags' behaviour
 	// rootCmd.Flags().BoolP("ignore-errors", "e", false, "Ignore network errors")
 	// rootCmd.Flags().BoolP("isolate", "I", false, "Cut off document from the Internet")
 	// rootCmd.Flags().BoolP("insecure", "k", false, "Allow invalid X.509 (TLS) certificates")
@@ -97,11 +145,11 @@ func Args() Options {
 	// if err := addURLs(allow, &args.AllowDomains); err != nil {
 	// 	panic("Allow Domain addition failed")
 	// }
-	if ans := addURLs(*allow); ans != nil {
+	if ans := AddUrls(*allow); ans != nil {
 		args.AllowDomains = ans
 	}
 	block := rootCmd.Flags().StringArrayP("block-domains", "D", []string{}, "Treat list of specified domains as blacklist")
-	if ans := addURLs(*block); ans != nil {
+	if ans := AddUrls(*block); ans != nil {
 		args.BlockDomains = ans
 	}
 

@@ -1,0 +1,690 @@
+Visiting http://localhost:8080/std/index.html
+On page: http://localhost:8080/std/index.html
+Visiting http://localhost:8080/std/all.html
+On page: http://localhost:8080/std/all.html
+Visiting http://localhost:8080/src/std/lib.rs.html
+On page: http://localhost:8080/src/std/lib.rs.html
+Visiting http://localhost:8080/std/vec/struct.Vec.html
+On page: http://localhost:8080/std/vec/struct.Vec.html
+Visiting http://localhost:8080/std/option/enum.Option.html
+On page: http://localhost:8080/std/option/enum.Option.html
+Visiting http://localhost:8080/std/io/index.html
+On page: http://localhost:8080/std/io/index.html
+Visiting http://localhost:8080/std/thread/index.html
+On page: http://localhost:8080/std/thread/index.html
+Visiting http://localhost:8080/book/ch07-02-defining-modules-to-control-scope-and-privacy.html
+On page: http://localhost:8080/book/ch07-02-defining-modules-to-control-scope-and-privacy.html
+Visiting http://localhost:8080/std/env/index.html
+On page: http://localhost:8080/std/env/index.html
+Visiting http://localhost:8080/std/prelude/index.html
+On page: http://localhost:8080/std/prelude/index.html
+Visiting http://localhost:8080/std/slice/index.html
+On page: http://localhost:8080/std/slice/index.html
+Visiting http://localhost:8080/std/cmp/index.html
+On page: http://localhost:8080/std/cmp/index.html
+Visiting http://localhost:8080/book/ch03-02-data-types.html
+On page: http://localhost:8080/book/ch03-02-data-types.html
+Visiting http://localhost:8080/std/primitive.i32.html
+On page: http://localhost:8080/std/primitive.i32.html
+Visiting http://localhost:8080/std/i32/index.html
+On page: http://localhost:8080/std/i32/index.html
+Visiting http://localhost:8080/std/i32/constant.MIN.html
+On page: http://localhost:8080/std/i32/constant.MIN.html
+Visiting http://localhost:8080/std/i32/constant.MAX.html
+On page: http://localhost:8080/std/i32/constant.MAX.html
+Visiting http://localhost:8080/std/primitive.str.html
+On page: http://localhost:8080/std/primitive.str.html
+Visiting http://localhost:8080/std/primitive.slice.html
+On page: http://localhost:8080/std/primitive.slice.html
+Visiting http://localhost:8080/std/string/struct.String.html
+On page: http://localhost:8080/std/string/struct.String.html
+Visiting http://localhost:8080/book/ch15-02-deref.html
+On page: http://localhost:8080/book/ch15-02-deref.html
+Visiting http://localhost:8080/std/option/index.html
+On page: http://localhost:8080/std/option/index.html
+Visiting http://localhost:8080/std/result/index.html
+On page: http://localhost:8080/std/result/index.html
+Visiting http://localhost:8080/std/result/enum.Result.html
+On page: http://localhost:8080/std/result/enum.Result.html
+Visiting http://localhost:8080/std/iter/index.html
+On page: http://localhost:8080/std/iter/index.html
+Visiting http://localhost:8080/std/iter/trait.Iterator.html
+On page: http://localhost:8080/std/iter/trait.Iterator.html
+Visiting http://localhost:8080/book/ch03-05-control-flow.html
+On page: http://localhost:8080/book/ch03-05-control-flow.html
+Visiting http://localhost:8080/std/primitive.array.html
+On page: http://localhost:8080/std/primitive.array.html
+Visiting http://localhost:8080/std/boxed/index.html
+On page: http://localhost:8080/std/boxed/index.html
+Visiting http://localhost:8080/std/macro.format.html
+On page: http://localhost:8080/std/macro.format.html
+Visiting http://localhost:8080/std/str/trait.FromStr.html
+On page: http://localhost:8080/std/str/trait.FromStr.html
+Visiting http://localhost:8080/std/rc/struct.Rc.html
+On page: http://localhost:8080/std/rc/struct.Rc.html
+Visiting http://localhost:8080/std/cell/struct.Cell.html
+On page: http://localhost:8080/std/cell/struct.Cell.html
+Visiting http://localhost:8080/std/cell/struct.RefCell.html
+On page: http://localhost:8080/std/cell/struct.RefCell.html
+Visiting http://localhost:8080/std/sync/struct.Arc.html
+On page: http://localhost:8080/std/sync/struct.Arc.html
+Visiting http://localhost:8080/std/sync/struct.Mutex.html
+On page: http://localhost:8080/std/sync/struct.Mutex.html
+Visiting http://localhost:8080/std/collections/index.html
+On page: http://localhost:8080/std/collections/index.html
+Visiting http://localhost:8080/std/collections/struct.HashMap.html
+On page: http://localhost:8080/std/collections/struct.HashMap.html
+Visiting http://localhost:8080/std/fs/struct.File.html
+On page: http://localhost:8080/std/fs/struct.File.html
+Visiting http://localhost:8080/std/net/struct.TcpStream.html
+On page: http://localhost:8080/std/net/struct.TcpStream.html
+Visiting http://localhost:8080/std/net/struct.UdpSocket.html
+On page: http://localhost:8080/std/net/struct.UdpSocket.html
+Visiting http://localhost:8080/std/fs/index.html
+On page: http://localhost:8080/std/fs/index.html
+Visiting http://localhost:8080/std/net/index.html
+On page: http://localhost:8080/std/net/index.html
+Visiting http://localhost:8080/std/sync/index.html
+On page: http://localhost:8080/std/sync/index.html
+Visiting http://localhost:8080/std/sync/atomic/index.html
+On page: http://localhost:8080/std/sync/atomic/index.html
+Visiting http://localhost:8080/std/sync/mpmc/index.html
+On page: http://localhost:8080/std/sync/mpmc/index.html
+Visiting http://localhost:8080/std/sync/mpsc/index.html
+On page: http://localhost:8080/std/sync/mpsc/index.html
+Visiting http://localhost:8080/std/thread/fn.current.html
+On page: http://localhost:8080/std/thread/fn.current.html
+Visiting http://localhost:8080/std/primitive.bool.html
+On page: http://localhost:8080/std/primitive.bool.html
+Visiting http://localhost:8080/std/primitive.char.html
+On page: http://localhost:8080/std/primitive.char.html
+Visiting http://localhost:8080/std/primitive.f32.html
+On page: http://localhost:8080/std/primitive.f32.html
+Visiting http://localhost:8080/std/primitive.f64.html
+On page: http://localhost:8080/std/primitive.f64.html
+Visiting http://localhost:8080/std/primitive.fn.html
+On page: http://localhost:8080/std/primitive.fn.html
+Visiting http://localhost:8080/std/primitive.i8.html
+On page: http://localhost:8080/std/primitive.i8.html
+Visiting http://localhost:8080/std/primitive.i16.html
+On page: http://localhost:8080/std/primitive.i16.html
+Visiting http://localhost:8080/std/primitive.i64.html
+On page: http://localhost:8080/std/primitive.i64.html
+Visiting http://localhost:8080/std/primitive.i128.html
+On page: http://localhost:8080/std/primitive.i128.html
+Visiting http://localhost:8080/std/primitive.isize.html
+On page: http://localhost:8080/std/primitive.isize.html
+Visiting http://localhost:8080/std/primitive.pointer.html
+On page: http://localhost:8080/std/primitive.pointer.html
+Visiting http://localhost:8080/std/primitive.reference.html
+On page: http://localhost:8080/std/primitive.reference.html
+Visiting http://localhost:8080/std/primitive.tuple.html
+On page: http://localhost:8080/std/primitive.tuple.html
+Visiting http://localhost:8080/std/primitive.u8.html
+On page: http://localhost:8080/std/primitive.u8.html
+Visiting http://localhost:8080/std/primitive.u16.html
+On page: http://localhost:8080/std/primitive.u16.html
+Visiting http://localhost:8080/std/primitive.u32.html
+On page: http://localhost:8080/std/primitive.u32.html
+Visiting http://localhost:8080/std/primitive.u64.html
+On page: http://localhost:8080/std/primitive.u64.html
+Visiting http://localhost:8080/std/primitive.u128.html
+On page: http://localhost:8080/std/primitive.u128.html
+Visiting http://localhost:8080/std/primitive.unit.html
+On page: http://localhost:8080/std/primitive.unit.html
+Visiting http://localhost:8080/std/primitive.usize.html
+On page: http://localhost:8080/std/primitive.usize.html
+Visiting http://localhost:8080/std/primitive.f16.html
+On page: http://localhost:8080/std/primitive.f16.html
+Visiting http://localhost:8080/std/primitive.f128.html
+On page: http://localhost:8080/std/primitive.f128.html
+Visiting http://localhost:8080/std/primitive.never.html
+On page: http://localhost:8080/std/primitive.never.html
+Visiting http://localhost:8080/std/alloc/index.html
+On page: http://localhost:8080/std/alloc/index.html
+Visiting http://localhost:8080/std/any/index.html
+On page: http://localhost:8080/std/any/index.html
+Visiting http://localhost:8080/std/arch/index.html
+On page: http://localhost:8080/std/arch/index.html
+Visiting http://localhost:8080/std/array/index.html
+On page: http://localhost:8080/std/array/index.html
+Visiting http://localhost:8080/std/ascii/index.html
+On page: http://localhost:8080/std/ascii/index.html
+Visiting http://localhost:8080/std/backtrace/index.html
+On page: http://localhost:8080/std/backtrace/index.html
+Visiting http://localhost:8080/std/borrow/index.html
+On page: http://localhost:8080/std/borrow/index.html
+Visiting http://localhost:8080/std/cell/index.html
+On page: http://localhost:8080/std/cell/index.html
+Visiting http://localhost:8080/std/char/index.html
+On page: http://localhost:8080/std/char/index.html
+Visiting http://localhost:8080/std/clone/index.html
+On page: http://localhost:8080/std/clone/index.html
+Visiting http://localhost:8080/std/convert/index.html
+On page: http://localhost:8080/std/convert/index.html
+Visiting http://localhost:8080/std/default/index.html
+On page: http://localhost:8080/std/default/index.html
+Visiting http://localhost:8080/std/error/index.html
+On page: http://localhost:8080/std/error/index.html
+Visiting http://localhost:8080/std/f32/index.html
+On page: http://localhost:8080/std/f32/index.html
+Visiting http://localhost:8080/std/f64/index.html
+On page: http://localhost:8080/std/f64/index.html
+Visiting http://localhost:8080/std/ffi/index.html
+On page: http://localhost:8080/std/ffi/index.html
+Visiting http://localhost:8080/std/fmt/index.html
+On page: http://localhost:8080/std/fmt/index.html
+Visiting http://localhost:8080/std/future/index.html
+On page: http://localhost:8080/std/future/index.html
+Visiting http://localhost:8080/std/hash/index.html
+On page: http://localhost:8080/std/hash/index.html
+Visiting http://localhost:8080/std/hint/index.html
+On page: http://localhost:8080/std/hint/index.html
+Visiting http://localhost:8080/std/i8/index.html
+On page: http://localhost:8080/std/i8/index.html
+Visiting http://localhost:8080/std/i16/index.html
+On page: http://localhost:8080/std/i16/index.html
+Visiting http://localhost:8080/std/i64/index.html
+On page: http://localhost:8080/std/i64/index.html
+Visiting http://localhost:8080/std/i128/index.html
+On page: http://localhost:8080/std/i128/index.html
+Visiting http://localhost:8080/std/isize/index.html
+On page: http://localhost:8080/std/isize/index.html
+Visiting http://localhost:8080/std/marker/index.html
+On page: http://localhost:8080/std/marker/index.html
+Visiting http://localhost:8080/std/mem/index.html
+On page: http://localhost:8080/std/mem/index.html
+Visiting http://localhost:8080/std/num/index.html
+On page: http://localhost:8080/std/num/index.html
+Visiting http://localhost:8080/std/ops/index.html
+On page: http://localhost:8080/std/ops/index.html
+Visiting http://localhost:8080/std/os/index.html
+On page: http://localhost:8080/std/os/index.html
+Visiting http://localhost:8080/std/panic/index.html
+On page: http://localhost:8080/std/panic/index.html
+Visiting http://localhost:8080/std/path/index.html
+On page: http://localhost:8080/std/path/index.html
+Visiting http://localhost:8080/std/pin/index.html
+On page: http://localhost:8080/std/pin/index.html
+Visiting http://localhost:8080/std/primitive/index.html
+On page: http://localhost:8080/std/primitive/index.html
+Visiting http://localhost:8080/std/process/index.html
+On page: http://localhost:8080/std/process/index.html
+Visiting http://localhost:8080/std/ptr/index.html
+On page: http://localhost:8080/std/ptr/index.html
+Visiting http://localhost:8080/std/rc/index.html
+On page: http://localhost:8080/std/rc/index.html
+Visiting http://localhost:8080/std/str/index.html
+On page: http://localhost:8080/std/str/index.html
+Visiting http://localhost:8080/std/string/index.html
+On page: http://localhost:8080/std/string/index.html
+Visiting http://localhost:8080/std/task/index.html
+On page: http://localhost:8080/std/task/index.html
+Visiting http://localhost:8080/std/time/index.html
+On page: http://localhost:8080/std/time/index.html
+Visiting http://localhost:8080/std/u8/index.html
+On page: http://localhost:8080/std/u8/index.html
+Visiting http://localhost:8080/std/u16/index.html
+On page: http://localhost:8080/std/u16/index.html
+Visiting http://localhost:8080/std/u32/index.html
+On page: http://localhost:8080/std/u32/index.html
+Visiting http://localhost:8080/std/u64/index.html
+On page: http://localhost:8080/std/u64/index.html
+Visiting http://localhost:8080/std/u128/index.html
+On page: http://localhost:8080/std/u128/index.html
+Visiting http://localhost:8080/std/usize/index.html
+On page: http://localhost:8080/std/usize/index.html
+Visiting http://localhost:8080/std/vec/index.html
+On page: http://localhost:8080/std/vec/index.html
+Visiting http://localhost:8080/std/assert_matches/index.html
+On page: http://localhost:8080/std/assert_matches/index.html
+Visiting http://localhost:8080/std/async_iter/index.html
+On page: http://localhost:8080/std/async_iter/index.html
+Visiting http://localhost:8080/std/autodiff/index.html
+On page: http://localhost:8080/std/autodiff/index.html
+Visiting http://localhost:8080/std/f16/index.html
+On page: http://localhost:8080/std/f16/index.html
+Visiting http://localhost:8080/std/f128/index.html
+On page: http://localhost:8080/std/f128/index.html
+Visiting http://localhost:8080/std/intrinsics/index.html
+On page: http://localhost:8080/std/intrinsics/index.html
+Visiting http://localhost:8080/std/pat/index.html
+On page: http://localhost:8080/std/pat/index.html
+Visiting http://localhost:8080/std/pipe/index.html
+On page: http://localhost:8080/std/pipe/index.html
+Visiting http://localhost:8080/std/random/index.html
+On page: http://localhost:8080/std/random/index.html
+Visiting http://localhost:8080/std/simd/index.html
+On page: http://localhost:8080/std/simd/index.html
+Visiting http://localhost:8080/std/unsafe_binder/index.html
+On page: http://localhost:8080/std/unsafe_binder/index.html
+Visiting http://localhost:8080/std/macro.assert.html
+On page: http://localhost:8080/std/macro.assert.html
+Visiting http://localhost:8080/std/macro.assert_eq.html
+On page: http://localhost:8080/std/macro.assert_eq.html
+Visiting http://localhost:8080/std/cmp/trait.PartialEq.html
+On page: http://localhost:8080/std/cmp/trait.PartialEq.html
+Visiting http://localhost:8080/std/macro.assert_ne.html
+On page: http://localhost:8080/std/macro.assert_ne.html
+Visiting http://localhost:8080/std/macro.cfg.html
+On page: http://localhost:8080/std/macro.cfg.html
+Visiting http://localhost:8080/std/macro.column.html
+On page: http://localhost:8080/std/macro.column.html
+Visiting http://localhost:8080/std/macro.compile_error.html
+On page: http://localhost:8080/std/macro.compile_error.html
+Visiting http://localhost:8080/std/macro.concat.html
+On page: http://localhost:8080/std/macro.concat.html
+Visiting http://localhost:8080/std/macro.dbg.html
+On page: http://localhost:8080/std/macro.dbg.html
+Visiting http://localhost:8080/std/macro.debug_assert.html
+On page: http://localhost:8080/std/macro.debug_assert.html
+Visiting http://localhost:8080/std/macro.debug_assert_eq.html
+On page: http://localhost:8080/std/macro.debug_assert_eq.html
+Visiting http://localhost:8080/std/macro.debug_assert_ne.html
+On page: http://localhost:8080/std/macro.debug_assert_ne.html
+Visiting http://localhost:8080/std/macro.env.html
+On page: http://localhost:8080/std/macro.env.html
+Visiting http://localhost:8080/std/macro.eprint.html
+On page: http://localhost:8080/std/macro.eprint.html
+Visiting http://localhost:8080/std/macro.eprintln.html
+On page: http://localhost:8080/std/macro.eprintln.html
+Visiting http://localhost:8080/std/macro.file.html
+On page: http://localhost:8080/std/macro.file.html
+Visiting http://localhost:8080/std/macro.format_args.html
+On page: http://localhost:8080/std/macro.format_args.html
+Visiting http://localhost:8080/std/macro.include.html
+On page: http://localhost:8080/std/macro.include.html
+Visiting http://localhost:8080/std/macro.include_bytes.html
+On page: http://localhost:8080/std/macro.include_bytes.html
+Visiting http://localhost:8080/std/macro.include_str.html
+On page: http://localhost:8080/std/macro.include_str.html
+Visiting http://localhost:8080/std/macro.is_x86_feature_detected.html
+On page: http://localhost:8080/std/macro.is_x86_feature_detected.html
+Visiting http://localhost:8080/std/macro.line.html
+On page: http://localhost:8080/std/macro.line.html
+Visiting http://localhost:8080/std/macro.matches.html
+On page: http://localhost:8080/std/macro.matches.html
+Visiting http://localhost:8080/std/macro.module_path.html
+On page: http://localhost:8080/std/macro.module_path.html
+Visiting http://localhost:8080/std/macro.option_env.html
+On page: http://localhost:8080/std/macro.option_env.html
+Visiting http://localhost:8080/std/macro.panic.html
+On page: http://localhost:8080/std/macro.panic.html
+Visiting http://localhost:8080/std/macro.print.html
+On page: http://localhost:8080/std/macro.print.html
+Visiting http://localhost:8080/std/macro.println.html
+On page: http://localhost:8080/std/macro.println.html
+Visiting http://localhost:8080/std/macro.stringify.html
+On page: http://localhost:8080/std/macro.stringify.html
+Visiting http://localhost:8080/std/macro.thread_local.html
+On page: http://localhost:8080/std/macro.thread_local.html
+Visiting http://localhost:8080/std/thread/struct.LocalKey.html
+On page: http://localhost:8080/std/thread/struct.LocalKey.html
+Visiting http://localhost:8080/std/macro.todo.html
+On page: http://localhost:8080/std/macro.todo.html
+Visiting http://localhost:8080/std/macro.try.html
+On page: http://localhost:8080/std/macro.try.html
+Visiting http://localhost:8080/std/macro.unimplemented.html
+On page: http://localhost:8080/std/macro.unimplemented.html
+Visiting http://localhost:8080/std/macro.unreachable.html
+On page: http://localhost:8080/std/macro.unreachable.html
+Visiting http://localhost:8080/std/macro.vec.html
+On page: http://localhost:8080/std/macro.vec.html
+Visiting http://localhost:8080/std/macro.write.html
+On page: http://localhost:8080/std/macro.write.html
+Visiting http://localhost:8080/std/macro.writeln.html
+On page: http://localhost:8080/std/macro.writeln.html
+Visiting http://localhost:8080/std/macro.cfg_match.html
+On page: http://localhost:8080/std/macro.cfg_match.html
+Visiting http://localhost:8080/std/macro.concat_bytes.html
+On page: http://localhost:8080/std/macro.concat_bytes.html
+Visiting http://localhost:8080/std/macro.concat_idents.html
+On page: http://localhost:8080/std/macro.concat_idents.html
+Visiting http://localhost:8080/std/macro.const_format_args.html
+On page: http://localhost:8080/std/macro.const_format_args.html
+Visiting http://localhost:8080/std/macro.format_args_nl.html
+On page: http://localhost:8080/std/macro.format_args_nl.html
+Visiting http://localhost:8080/std/macro.log_syntax.html
+On page: http://localhost:8080/std/macro.log_syntax.html
+Visiting http://localhost:8080/std/macro.trace_macros.html
+On page: http://localhost:8080/std/macro.trace_macros.html
+Visiting http://localhost:8080/std/keyword.SelfTy.html
+On page: http://localhost:8080/std/keyword.SelfTy.html
+Visiting http://localhost:8080/std/keyword.trait.html
+On page: http://localhost:8080/std/keyword.trait.html
+Visiting http://localhost:8080/std/keyword.impl.html
+On page: http://localhost:8080/std/keyword.impl.html
+Visiting http://localhost:8080/std/keyword.as.html
+On page: http://localhost:8080/std/keyword.as.html
+Visiting http://localhost:8080/std/keyword.async.html
+On page: http://localhost:8080/std/keyword.async.html
+Visiting http://localhost:8080/std/future/trait.Future.html
+On page: http://localhost:8080/std/future/trait.Future.html
+Visiting http://localhost:8080/std/keyword.await.html
+On page: http://localhost:8080/std/keyword.await.html
+Visiting http://localhost:8080/std/keyword.break.html
+On page: http://localhost:8080/std/keyword.break.html
+Visiting http://localhost:8080/std/keyword.const.html
+On page: http://localhost:8080/std/keyword.const.html
+Visiting http://localhost:8080/std/keyword.continue.html
+On page: http://localhost:8080/std/keyword.continue.html
+Visiting http://localhost:8080/std/keyword.crate.html
+On page: http://localhost:8080/std/keyword.crate.html
+Visiting http://localhost:8080/std/keyword.dyn.html
+On page: http://localhost:8080/std/keyword.dyn.html
+Visiting http://localhost:8080/book/ch17-02-trait-objects.html
+On page: http://localhost:8080/book/ch17-02-trait-objects.html
+Visiting http://localhost:8080/std/keyword.else.html
+On page: http://localhost:8080/std/keyword.else.html
+Visiting http://localhost:8080/std/keyword.if.html
+On page: http://localhost:8080/std/keyword.if.html
+Visiting http://localhost:8080/std/keyword.false.html
+On page: http://localhost:8080/std/keyword.false.html
+Visiting http://localhost:8080/std/keyword.enum.html
+On page: http://localhost:8080/std/keyword.enum.html
+Visiting http://localhost:8080/std/keyword.extern.html
+On page: http://localhost:8080/std/keyword.extern.html
+Visiting http://localhost:8080/std/keyword.fn.html
+On page: http://localhost:8080/std/keyword.fn.html
+Visiting http://localhost:8080/std/keyword.for.html
+On page: http://localhost:8080/std/keyword.for.html
+Visiting http://localhost:8080/std/keyword.in.html
+On page: http://localhost:8080/std/keyword.in.html
+Visiting http://localhost:8080/reference/trait-bounds.html
+On page: http://localhost:8080/reference/trait-bounds.html
+Visiting http://localhost:8080/std/keyword.let.html
+On page: http://localhost:8080/std/keyword.let.html
+Visiting http://localhost:8080/std/keyword.loop.html
+On page: http://localhost:8080/std/keyword.loop.html
+Visiting http://localhost:8080/std/keyword.match.html
+On page: http://localhost:8080/std/keyword.match.html
+Visiting http://localhost:8080/std/keyword.mod.html
+On page: http://localhost:8080/std/keyword.mod.html
+Visiting http://localhost:8080/reference/items/modules.html
+On page: http://localhost:8080/reference/items/modules.html
+Visiting http://localhost:8080/std/keyword.move.html
+On page: http://localhost:8080/std/keyword.move.html
+Visiting http://localhost:8080/book/ch13-01-closures.html
+On page: http://localhost:8080/book/ch13-01-closures.html
+Visiting http://localhost:8080/std/keyword.mut.html
+On page: http://localhost:8080/std/keyword.mut.html
+Visiting http://localhost:8080/std/keyword.pub.html
+On page: http://localhost:8080/std/keyword.pub.html
+Visiting http://localhost:8080/std/keyword.ref.html
+On page: http://localhost:8080/std/keyword.ref.html
+Visiting http://localhost:8080/std/keyword.return.html
+On page: http://localhost:8080/std/keyword.return.html
+Visiting http://localhost:8080/std/keyword.self.html
+On page: http://localhost:8080/std/keyword.self.html
+Visiting http://localhost:8080/std/keyword.static.html
+On page: http://localhost:8080/std/keyword.static.html
+Visiting http://localhost:8080/std/keyword.struct.html
+On page: http://localhost:8080/std/keyword.struct.html
+Visiting http://localhost:8080/std/keyword.super.html
+On page: http://localhost:8080/std/keyword.super.html
+Visiting http://localhost:8080/std/keyword.true.html
+On page: http://localhost:8080/std/keyword.true.html
+Visiting http://localhost:8080/std/keyword.type.html
+On page: http://localhost:8080/std/keyword.type.html
+Visiting http://localhost:8080/reference/items/type-aliases.html
+On page: http://localhost:8080/reference/items/type-aliases.html
+Visiting http://localhost:8080/std/keyword.union.html
+On page: http://localhost:8080/std/keyword.union.html
+Visiting http://localhost:8080/reference/items/unions.html
+On page: http://localhost:8080/reference/items/unions.html
+Visiting http://localhost:8080/std/keyword.unsafe.html
+On page: http://localhost:8080/std/keyword.unsafe.html
+Visiting http://localhost:8080/book/ch19-01-unsafe-rust.html
+On page: http://localhost:8080/book/ch19-01-unsafe-rust.html
+Visiting http://localhost:8080/std/keyword.use.html
+On page: http://localhost:8080/std/keyword.use.html
+Visiting http://localhost:8080/std/keyword.where.html
+On page: http://localhost:8080/std/keyword.where.html
+Visiting http://localhost:8080/std/keyword.while.html
+On page: http://localhost:8080/std/keyword.while.html
+Visiting http://localhost:8080/static.files/normalize-9960930a.css
+On page: http://localhost:8080/static.files/normalize-9960930a.css
+Visiting http://localhost:8080/static.files/rustdoc-46132b98.css
+On page: http://localhost:8080/static.files/rustdoc-46132b98.css
+Visiting http://localhost:8080/static.files/favicon-32x32-6580c154.png
+On page: http://localhost:8080/static.files/favicon-32x32-6580c154.png
+Visiting http://localhost:8080/static.files/favicon-044be391.svg
+On page: http://localhost:8080/static.files/favicon-044be391.svg
+Visiting http://localhost:8080/static.files/rust-logo-9a9549ea.svg
+On page: http://localhost:8080/static.files/rust-logo-9a9549ea.svg
+Visiting http://localhost:8080/static.files/storage-59e33391.js
+On page: http://localhost:8080/static.files/storage-59e33391.js
+Visiting http://localhost:8080/crates1.85.0.js
+On page: http://localhost:8080/crates1.85.0.js
+Visiting http://localhost:8080/static.files/main-5f194d8c.js
+On page: http://localhost:8080/static.files/main-5f194d8c.js
+Page: http://localhost:8080/std/sync/atomic/index.html
+Page: http://localhost:8080/std/f64/index.html
+Page: http://localhost:8080/std/rc/index.html
+Page: http://localhost:8080/std/macro.cfg_match.html
+Page: http://localhost:8080/reference/items/modules.html
+Page: http://localhost:8080/std/primitive.slice.html
+Page: http://localhost:8080/std/rc/struct.Rc.html
+Page: http://localhost:8080/std/net/index.html
+Page: http://localhost:8080/std/borrow/index.html
+Page: http://localhost:8080/std/clone/index.html
+Page: http://localhost:8080/std/iter/index.html
+Page: http://localhost:8080/std/future/index.html
+Page: http://localhost:8080/std/macro.debug_assert_eq.html
+Page: http://localhost:8080/std/backtrace/index.html
+Page: http://localhost:8080/std/time/index.html
+Page: http://localhost:8080/std/macro.writeln.html
+Page: http://localhost:8080/std/macro.format_args_nl.html
+Page: http://localhost:8080/std/str/trait.FromStr.html
+Page: http://localhost:8080/std/intrinsics/index.html
+Page: http://localhost:8080/std/unsafe_binder/index.html
+Page: http://localhost:8080/std/macro.log_syntax.html
+Page: http://localhost:8080/std/macro.format.html
+Page: http://localhost:8080/std/ascii/index.html
+Page: http://localhost:8080/std/convert/index.html
+Page: http://localhost:8080/std/macro.todo.html
+Page: http://localhost:8080/std/keyword.await.html
+Page: http://localhost:8080/std/keyword.if.html
+Page: http://localhost:8080/std/keyword.super.html
+Page: http://localhost:8080/std/sync/mpmc/index.html
+Page: http://localhost:8080/std/random/index.html
+Page: http://localhost:8080/std/macro.file.html
+Page: http://localhost:8080/std/macro.try.html
+Page: http://localhost:8080/std/keyword.type.html
+Page: http://localhost:8080/std/primitive.fn.html
+Page: http://localhost:8080/std/macro.debug_assert_ne.html
+Page: http://localhost:8080/std/os/index.html
+Page: http://localhost:8080/std/prelude/index.html
+Page: http://localhost:8080/std/i32/index.html
+Page: http://localhost:8080/std/macro.write.html
+Page: http://localhost:8080/std/future/trait.Future.html
+Page: http://localhost:8080/std/keyword.false.html
+Page: http://localhost:8080/std/macro.module_path.html
+Page: http://localhost:8080/std/macro.option_env.html
+Page: http://localhost:8080/std/default/index.html
+Page: http://localhost:8080/std/primitive.isize.html
+Page: http://localhost:8080/std/primitive.never.html
+Page: http://localhost:8080/std/keyword.in.html
+Page: http://localhost:8080/std/collections/index.html
+Page: http://localhost:8080/std/keyword.self.html
+Page: http://localhost:8080/std/primitive.i64.html
+Page: http://localhost:8080/std/result/index.html
+Page: http://localhost:8080/std/cell/struct.Cell.html
+Page: http://localhost:8080/crates1.85.0.js
+Page: http://localhost:8080/std/keyword.unsafe.html
+Page: http://localhost:8080/std/option/enum.Option.html
+Page: http://localhost:8080/std/env/index.html
+Page: http://localhost:8080/std/cmp/index.html
+Page: http://localhost:8080/std/collections/struct.HashMap.html
+Page: http://localhost:8080/std/usize/index.html
+Page: http://localhost:8080/std/keyword.struct.html
+Page: http://localhost:8080/std/f32/index.html
+Page: http://localhost:8080/std/fmt/index.html
+Page: http://localhost:8080/std/vec/index.html
+Page: http://localhost:8080/std/pat/index.html
+Page: http://localhost:8080/std/macro.column.html
+Page: http://localhost:8080/std/boxed/index.html
+Page: http://localhost:8080/std/primitive.usize.html
+Page: http://localhost:8080/std/arch/index.html
+Page: http://localhost:8080/std/keyword.const.html
+Page: http://localhost:8080/std/keyword.match.html
+Page: http://localhost:8080/book/ch03-02-data-types.html
+Page: http://localhost:8080/std/cell/struct.RefCell.html
+Page: http://localhost:8080/std/macro.assert.html
+Page: http://localhost:8080/std/macro.print.html
+Page: http://localhost:8080/std/keyword.async.html
+Page: http://localhost:8080/std/result/enum.Result.html
+Page: http://localhost:8080/std/primitive.f64.html
+Page: http://localhost:8080/std/macro.debug_assert.html
+Page: http://localhost:8080/std/macro.env.html
+Page: http://localhost:8080/std/macro.const_format_args.html
+Page: http://localhost:8080/std/keyword.union.html
+Page: http://localhost:8080/std/string/struct.String.html
+Page: http://localhost:8080/std/primitive.array.html
+Page: http://localhost:8080/std/macro.assert_eq.html
+Page: http://localhost:8080/std/macro.concat.html
+Page: http://localhost:8080/reference/trait-bounds.html
+Page: http://localhost:8080/std/primitive.i16.html
+Page: http://localhost:8080/book/ch07-02-defining-modules-to-control-scope-and-privacy.html
+Page: http://localhost:8080/std/primitive.str.html
+Page: http://localhost:8080/std/keyword.enum.html
+Page: http://localhost:8080/static.files/rustdoc-46132b98.css
+Page: http://localhost:8080/std/slice/index.html
+Page: http://localhost:8080/std/macro.concat_bytes.html
+Page: http://localhost:8080/std/keyword.static.html
+Page: http://localhost:8080/std/iter/trait.Iterator.html
+Page: http://localhost:8080/book/ch03-05-control-flow.html
+Page: http://localhost:8080/std/net/struct.TcpStream.html
+Page: http://localhost:8080/std/primitive.unit.html
+Page: http://localhost:8080/std/error/index.html
+Page: http://localhost:8080/std/fs/struct.File.html
+Page: http://localhost:8080/std/hint/index.html
+Page: http://localhost:8080/std/mem/index.html
+Page: http://localhost:8080/std/macro.vec.html
+Page: http://localhost:8080/static.files/rust-logo-9a9549ea.svg
+Page: http://localhost:8080/std/ops/index.html
+Page: http://localhost:8080/std/io/index.html
+Page: http://localhost:8080/std/primitive.i32.html
+Page: http://localhost:8080/book/ch15-02-deref.html
+Page: http://localhost:8080/std/sync/struct.Mutex.html
+Page: http://localhost:8080/std/primitive.f32.html
+Page: http://localhost:8080/std/primitive.u128.html
+Page: http://localhost:8080/std/keyword.impl.html
+Page: http://localhost:8080/std/keyword.true.html
+Page: http://localhost:8080/std/primitive.i128.html
+Page: http://localhost:8080/std/isize/index.html
+Page: http://localhost:8080/std/keyword.let.html
+Page: http://localhost:8080/std/marker/index.html
+Page: http://localhost:8080/std/num/index.html
+Page: http://localhost:8080/std/macro.assert_ne.html
+Page: http://localhost:8080/std/macro.matches.html
+Page: http://localhost:8080/std/keyword.SelfTy.html
+Page: http://localhost:8080/std/i32/constant.MIN.html
+Page: http://localhost:8080/std/thread/fn.current.html
+Page: http://localhost:8080/std/primitive.u64.html
+Page: http://localhost:8080/std/i64/index.html
+Page: http://localhost:8080/std/process/index.html
+Page: http://localhost:8080/std/string/index.html
+Page: http://localhost:8080/std/char/index.html
+Page: http://localhost:8080/std/ffi/index.html
+Page: http://localhost:8080/std/primitive/index.html
+Page: http://localhost:8080/std/keyword.pub.html
+Page: http://localhost:8080/std/primitive.tuple.html
+Page: http://localhost:8080/std/macro.stringify.html
+Page: http://localhost:8080/std/thread/struct.LocalKey.html
+Page: http://localhost:8080/std/keyword.crate.html
+Page: http://localhost:8080/std/keyword.fn.html
+Page: http://localhost:8080/static.files/normalize-9960930a.css
+Page: http://localhost:8080/std/thread/index.html
+Page: http://localhost:8080/std/str/index.html
+Page: http://localhost:8080/std/u32/index.html
+Page: http://localhost:8080/std/simd/index.html
+Page: http://localhost:8080/std/primitive.f128.html
+Page: http://localhost:8080/std/async_iter/index.html
+Page: http://localhost:8080/static.files/favicon-32x32-6580c154.png
+Page: http://localhost:8080/std/primitive.bool.html
+Page: http://localhost:8080/std/autodiff/index.html
+Page: http://localhost:8080/std/macro.eprint.html
+Page: http://localhost:8080/std/macro.include_str.html
+Page: http://localhost:8080/std/keyword.use.html
+Page: http://localhost:8080/std/primitive.i8.html
+Page: http://localhost:8080/std/net/struct.UdpSocket.html
+Page: http://localhost:8080/std/primitive.reference.html
+Page: http://localhost:8080/std/alloc/index.html
+Page: http://localhost:8080/std/cell/index.html
+Page: http://localhost:8080/std/primitive.char.html
+Page: http://localhost:8080/std/i32/constant.MAX.html
+Page: http://localhost:8080/std/i8/index.html
+Page: http://localhost:8080/std/pin/index.html
+Page: http://localhost:8080/std/u16/index.html
+Page: http://localhost:8080/std/u64/index.html
+Page: http://localhost:8080/std/macro.println.html
+Page: http://localhost:8080/book/ch17-02-trait-objects.html
+Page: http://localhost:8080/std/panic/index.html
+Page: http://localhost:8080/std/macro.include_bytes.html
+Page: http://localhost:8080/std/keyword.trait.html
+Page: http://localhost:8080/std/keyword.extern.html
+Page: http://localhost:8080/std/primitive.pointer.html
+Page: http://localhost:8080/std/macro.trace_macros.html
+Page: http://localhost:8080/book/ch13-01-closures.html
+Page: http://localhost:8080/std/u8/index.html
+Page: http://localhost:8080/std/assert_matches/index.html
+Page: http://localhost:8080/std/macro.include.html
+Page: http://localhost:8080/std/macro.concat_idents.html
+Page: http://localhost:8080/std/keyword.ref.html
+Page: http://localhost:8080/static.files/storage-59e33391.js
+Page: http://localhost:8080/std/sync/index.html
+Page: http://localhost:8080/std/macro.format_args.html
+Page: http://localhost:8080/std/keyword.continue.html
+Page: http://localhost:8080/std/keyword.for.html
+Page: http://localhost:8080/book/ch19-01-unsafe-rust.html
+Page: http://localhost:8080/std/keyword.break.html
+Page: http://localhost:8080/std/keyword.mut.html
+Page: http://localhost:8080/std/macro.cfg.html
+Page: http://localhost:8080/std/keyword.move.html
+Page: http://localhost:8080/std/keyword.where.html
+Page: http://localhost:8080/std/keyword.while.html
+Page: http://localhost:8080/std/macro.panic.html
+Page: http://localhost:8080/std/hash/index.html
+Page: http://localhost:8080/std/all.html
+Page: http://localhost:8080/std/any/index.html
+Page: http://localhost:8080/std/macro.compile_error.html
+Page: http://localhost:8080/std/array/index.html
+Page: http://localhost:8080/std/macro.thread_local.html
+Page: http://localhost:8080/reference/items/type-aliases.html
+Page: http://localhost:8080/static.files/main-5f194d8c.js
+Page: http://localhost:8080/std/sync/struct.Arc.html
+Page: http://localhost:8080/std/fs/index.html
+Page: http://localhost:8080/std/sync/mpsc/index.html
+Page: http://localhost:8080/std/i16/index.html
+Page: http://localhost:8080/std/macro.line.html
+Page: http://localhost:8080/src/std/lib.rs.html
+Page: http://localhost:8080/std/option/index.html
+Page: http://localhost:8080/std/primitive.f16.html
+Page: http://localhost:8080/std/macro.dbg.html
+Page: http://localhost:8080/std/u128/index.html
+Page: http://localhost:8080/std/f16/index.html
+Page: http://localhost:8080/std/primitive.u16.html
+Page: http://localhost:8080/std/path/index.html
+Page: http://localhost:8080/std/ptr/index.html
+Page: http://localhost:8080/std/pipe/index.html
+Page: http://localhost:8080/std/macro.unreachable.html
+Page: http://localhost:8080/std/keyword.mod.html
+Page: http://localhost:8080/std/index.html
+Page: http://localhost:8080/std/vec/struct.Vec.html
+Page: http://localhost:8080/std/macro.eprintln.html
+Page: http://localhost:8080/std/keyword.dyn.html
+Page: http://localhost:8080/std/keyword.return.html
+Page: http://localhost:8080/std/macro.unimplemented.html
+Page: http://localhost:8080/std/task/index.html
+Page: http://localhost:8080/std/cmp/trait.PartialEq.html
+Page: http://localhost:8080/std/keyword.else.html
+Page: http://localhost:8080/std/keyword.loop.html
+Page: http://localhost:8080/reference/items/unions.html
+Page: http://localhost:8080/std/primitive.u32.html
+Page: http://localhost:8080/std/i128/index.html
+Page: http://localhost:8080/std/macro.is_x86_feature_detected.html
+Page: http://localhost:8080/static.files/favicon-044be391.svg
+Page: http://localhost:8080/std/primitive.u8.html
+Page: http://localhost:8080/std/f128/index.html
+Page: http://localhost:8080/std/keyword.as.html

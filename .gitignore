@@ -1,2 +1,7 @@
 *.pdf
+*.epub
 *.zip
+*.exe
+*.dll
+*.so
+*.a
