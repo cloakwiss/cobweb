@@ -3,7 +3,11 @@ package manifests
 import (
 	"bufio"
 	"encoding/xml"
+	"mime"
 	"strings"
+
+	"github.com/cloakwiss/cobweb/epub/process"
+	"github.com/cloakwiss/cobweb/fetch"
 )
 
 // Container.xml
@@ -48,6 +52,7 @@ func NewContainer(writeBuffer *bufio.Writer, path string) error {
 	if er != nil {
 		return er
 	}
+	writeBuffer.Flush()
 	return nil
 }
 
@@ -65,14 +70,16 @@ func NewContainer(writeBuffer *bufio.Writer, path string) error {
 // Store all the data in map and then based on the key decide
 // if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
 func GenerateMetadataSection(writeBuffer *bufio.Writer, items map[string]string) (er error) {
-	if _, er = writeBuffer.WriteString("<metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"); er != nil {
+	if _, er = writeBuffer.WriteString("  <metadata xmlns:opf=\"http://www.idpf.org/2007/opf\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\">\n"); er != nil {
 		return
 	}
 	for element, value := range items {
 		var data string
 		switch element {
-		case "identifier", "language", "title":
-			data = "\t<dc:" + element + ">" + value + "</dc:" + element + ">\n"
+		case "language", "title":
+			data = "    <dc:" + element + ">" + value + "</dc:" + element + ">\n"
+		case "identifier":
+			data = "    <dc:" + element + ">" + "urn:uuid:A1B0D67E-2E81-4DF5-9E67-A64CBE366809" + "</dc:" + element + ">\n"
 		case "contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type":
 			//TODO: this is incomplete and I have to figure out if mapping from html page's meta section can be mapped directly
 		default:
@@ -114,6 +121,11 @@ type ManifestItem struct {
 
 // TODO: TOC files needs a special it
 func GenerateManifestSection(writeBuffer *bufio.Writer, items []ManifestItem) error {
+	items = append(items, ManifestItem{
+		FileId:    "nav",
+		FilePath:  "nav.xhtml",
+		MediaType: "application/xhtml+xml",
+	})
 	return generateSection(writeBuffer, "manifest", 1, items)
 }
 
@@ -127,53 +139,43 @@ func GenerateSpineSection(writeBuffer *bufio.Writer, items []SpineItem) error {
 	return generateSection(writeBuffer, "spine", 1, items)
 }
 
-const XhtmlMime string = "text/html; charset=utf-8"
-
-// type ContentOpfMetaData struct {
-// 	// Both can be equal (as far as I understand)
-// 	uniqueId, title string
-// 	// We will use uuid as identifer
-// 	identifier string
-// 	// we need short hands like en, de, ru, jp, kr
-// 	language string
-// }
-
 // Maybe the pages should be more refined which contains the more info
-// func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata fetch.PageMetadata, assets process.AllAssets) error {
-// 	closing, er := GeneratePackageStart(writeBuffer, mandatoryMetadata.Title)
-// 	if er != nil {
-// 		return er
-// 	}
-// 	defer func() {
-// 		writeBuffer.Write(closing)
-// 		writeBuffer.Flush()
-// 	}()
-// 	// GenerateMetadataSection(writeBuffer, map[string]string{
-// 	// 	// Identifier should be uuid
-// 	// 	"identifier": mandatoryMetadata.identifier,
-// 	// 	"language":   mandatoryMetadata.language,
-// 	// 	// Need to find out the the title of main page
-// 	// 	"title": mandatoryMetadata.title,
-// 	// })
-// 	manifestItems := make([]ManifestItem, 0, len(assets.Asssets)+len(assets.XhtmlPages))
-// 	spineItems := make([]SpineItem, 0, len(assets.XhtmlPages))
-// 	for url, pagedata := range assets.AllAssetStore {
-// 		manifestItems = append(manifestItems, ManifestItem{
-// 			FileId:    url.EscapedPath(),
-// 			FilePath:  url.EscapedPath(),
-// 			MediaType: pagedata.MediaType,
-// 		})
-// 		if pagedata.MediaType == XhtmlMime {
-// 			spineItems = append(spineItems, SpineItem{
-// 				Idref:   url.EscapedPath(),
-// 				XMLName: struct{}{},
-// 			})
-// 		}
-// 	}
-// 	GenerateManifestSection(writeBuffer, manifestItems)
-// 	// GenerateSpineSection(writeBuffer, spineItems)
-// 	return nil
-// }
+func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata fetch.PageMetadata, assets process.AllAssets) error {
+	xhtmlMime := mime.TypeByExtension(".xhtml")
+	closing, er := GeneratePackageStart(writeBuffer, mandatoryMetadata.Title)
+	if er != nil {
+		return er
+	}
+	defer func() {
+		writeBuffer.Write(closing)
+		writeBuffer.Flush()
+	}()
+	GenerateMetadataSection(writeBuffer, map[string]string{
+		// Identifier should be uuid
+		"identifier": "",
+		"language":   "en",
+		// Need to find out the the title of main page
+		"title": mandatoryMetadata.Title,
+	})
+	manifestItems := make([]ManifestItem, 0, len(assets.Assets)+len(assets.XhtmlPages))
+	spineItems := make([]SpineItem, 0, len(assets.XhtmlPages))
+	//TODO: This can be changed
+	for url, pagedata := range assets.AllAssetStore {
+		manifestItems = append(manifestItems, ManifestItem{
+			FileId:    url,
+			FilePath:  url,
+			MediaType: pagedata.MediaType,
+		})
+		if pagedata.MediaType == xhtmlMime {
+			spineItems = append(spineItems, SpineItem{
+				Idref: url,
+			})
+		}
+	}
+	GenerateManifestSection(writeBuffer, manifestItems)
+	GenerateSpineSection(writeBuffer, spineItems)
+	return nil
+}
 
 // General Functions
 
@@ -189,8 +191,8 @@ func removeClose(buf []byte) []byte {
 }
 
 func generateSection[S ManifestItem | SpineItem](writeBuffer *bufio.Writer, sectionName string, indent int, items []S) error {
-	l0 := strings.Repeat("\t", indent+0)
-	l1 := strings.Repeat("\t", indent+1)
+	l0 := strings.Repeat("  ", indent+0)
+	l1 := strings.Repeat("  ", indent+1)
 
 	start := []byte("<" + sectionName + ">\n")
 	end := []byte("</" + sectionName + ">\n")

@@ -19,7 +19,7 @@ func TidyHTML(input []byte) []byte {
 	cOutput := C.tidy_html((*C.char)(cInput), C.uint64_t(len(input)))
 
 	if cOutput == nil {
-		return []byte("Error processing HTML")
+		return nil
 	}
 	defer C.free(unsafe.Pointer(cOutput))
 

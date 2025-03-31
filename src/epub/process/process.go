@@ -36,19 +36,23 @@ func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 
 	for _, uri := range keys {
 		data := allAssets[uri]
-		path := uri.EscapedPath()
-		// If it is html then insert it in new map
-		// for pages
+		path := strings.TrimLeft(uri.EscapedPath(), "/")
+
 		if strings.Contains(data.MediaType, htmlMime) {
 			xhtml := tidy.TidyHTML(data.Data)
-			pages[pageNumber] = newName(path)
-			allAssetsStore[pages[pageNumber]] = fetch.Asset{
-				Data: xhtml,
-				Metadata: fetch.Metadata{
-					MediaType: xhtmlMime,
-				},
+			if xhtml != nil {
+				println("Length: ", len(xhtml))
+				pages[pageNumber] = newName(path)
+				allAssetsStore[pages[pageNumber]] = fetch.Asset{
+					Data: xhtml,
+					Metadata: fetch.Metadata{
+						MediaType: xhtmlMime,
+					},
+				}
+				pageNumber += 1
+			} else {
+				log.Printf("Path: %s", path)
 			}
-			pageNumber += 1
 		} else {
 			assets[assetNumber] = path
 			allAssetsStore[assets[assetNumber]] = fetch.Asset{
@@ -60,7 +64,11 @@ func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 			assetNumber += 1
 		}
 	}
-	return AllAssets{pages, assets, allAssetsStore}
+	return AllAssets{
+		XhtmlPages:    slices.Compact(pages),
+		Assets:        slices.Compact(assets),
+		AllAssetStore: allAssetsStore,
+	}
 }
 
 func newName(path string) string {

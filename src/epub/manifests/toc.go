@@ -53,7 +53,12 @@ func directoryTree(root string, dirlisting []string) Directory {
 	)
 
 	for dir, sub := range subDirs {
-		localpath := root + "/" + dir
+		var localpath string
+		if root != "" {
+			localpath = root + "/" + dir
+		} else {
+			localpath = dir
+		}
 		processedDirs = append(processedDirs, directoryTree(localpath, sub))
 	}
 	for i := range files {
@@ -79,16 +84,38 @@ func GenerateDirectoryTree(fileslist []string) Directory {
 }
 
 func MarshalToc(dir Directory, writeBuffer *bufio.Writer) {
-	marshalToc(dir, 0, writeBuffer)
+	header := []string{
+		"<!DOCTYPE html>",
+		`<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en" xmlns:epub="http://www.idpf.org/2007/ops">`,
+		"  <body>",
+		"    <nav epub:type=\"toc\">",
+	}
+	footer := []string{
+		"    </nav>",
+		"  <body>",
+		"</html>",
+	}
+	for _, l := range header {
+		writeBuffer.WriteString(l + "\n")
+	}
+	writeBuffer.Flush()
+	marshalToc(dir, 3, writeBuffer)
+	for _, l := range footer {
+		writeBuffer.WriteString(l + "\n")
+	}
+	writeBuffer.Flush()
 }
 
 func marshalToc(dir Directory, indent int, writeBuffer *bufio.Writer) {
-	l0 := strings.Repeat("\t", indent+0)
-	l1 := strings.Repeat("\t", indent+1)
-	l2 := strings.Repeat("\t", indent+2)
+	l0 := strings.Repeat("  ", indent+0)
+	l1 := strings.Repeat("  ", indent+1)
+	l2 := strings.Repeat("  ", indent+2)
 
 	writeBuffer.WriteString(l0 + "<li>")
-	defer writeBuffer.WriteString(l0 + "</li>\n")
+	defer func() {
+		writeBuffer.WriteString(l0 + "</li>\n")
+		writeBuffer.Flush()
+	}()
 
 	writeBuffer.WriteString("<span>")
 	if er := xml.EscapeText(writeBuffer, []byte(dir.Path)); er != nil {
@@ -113,5 +140,4 @@ func marshalToc(dir Directory, indent int, writeBuffer *bufio.Writer) {
 		writeBuffer.WriteString("</a></li>\n")
 	}
 	writeBuffer.WriteString(l1 + "</ol>\n")
-	writeBuffer.Flush()
 }

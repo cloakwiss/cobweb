@@ -7,9 +7,14 @@ import (
 	"os"
 )
 
+type Pair struct {
+	File  string
+	Bytes []byte
+}
+
 // The order of pages is important, so make it array instead of map later
 // TODO: add proper date of creation to every file
-func WriteTozip(pages map[string][]byte, outputZipFile string) {
+func WriteTozip(pages []Pair, outputZipFile string) {
 	// Create a buffer to write our archive to.
 	buf := new(bytes.Buffer)
 
@@ -17,31 +22,37 @@ func WriteTozip(pages map[string][]byte, outputZipFile string) {
 	w := zip.NewWriter(buf)
 
 	// Adding mimetype file which should be the first in any epub
-	{
+
+	/*{
 		file := zip.FileHeader{
-			Name:    "mimetype",
-			Comment: "",
-			NonUTF8: true,
-			Method:  zip.Store,
+			Name:               "mimetype",
+			Comment:            "",
+			NonUTF8:            true,
+			Method:             zip.Store,
+			CRC32:              749429103,
+			CompressedSize:     20,
+			UncompressedSize:   20,
+			CompressedSize64:   20,
+			UncompressedSize64: 20,
 		}
 		f, err := w.CreateRaw(&file)
 		if err != nil {
 			log.Fatal(err)
 		}
-		f.Write([]byte("application/epub+zip"))
-	}
-	// Adding META-INF/container.xml which should be the second in epub
-	{
-		//TODO:
-	}
-
-	// Add some files to the archive.
-	for path, file := range pages {
-		f, err := w.Create(path)
+		_, err = f.Write([]byte("application/epub+zip"))
 		if err != nil {
 			log.Fatal(err)
 		}
-		_, err = f.Write(file)
+	}*/
+
+	// Add some files to the archive.
+	for _, pair := range pages {
+		f, err := w.Create(pair.File)
+		if err != nil {
+			log.Fatal(err)
+		}
+		trimmed := bytes.Trim(pair.Bytes, "0x00")
+		_, err = f.Write(trimmed)
 		if err != nil {
 			log.Fatal(err)
 		}
