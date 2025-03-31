@@ -14,19 +14,28 @@ func main() {
 
 	pages := fetch.Scrapper(args.Targets, args)
 
-	// for key, val := range pages {
-	// 	fmt.Printf("Page: %s\n", key.String())
-	// 	fmt.Printf("MediaType: %+v\n", val.MediaType)
-	// Pay attention to the extra `/` at the start of path
-	// stripped := strings.TrimLeft(key.Path, "/")
-	// npages[stripped] = val.Data
-	// }
+	for key := range pages {
+		fmt.Printf("Page: %s\n", key.String())
+		// fmt.Printf("MediaType: %+v\n", val.MediaType)
+		// Pay attention to the extra `/` at the start of path
+		// stripped := strings.TrimLeft(key.Path, "/")
+		// npages[stripped] = val.Data
+	}
 
 	// Process the pages
-	propages := process.ConvertHtml(pages)
+	propages := process.OrderAndConvertPages(pages)
 	for _, k := range propages.XhtmlPages {
-		fmt.Println("\t", k)
+		fmt.Println("\t`", k, "`")
+		// fmt.Println(string(propages.AllAssetStore[k].Data))
 	}
+	for _, k := range propages.Assets {
+		fmt.Println("\t`", k, "`")
+		// fmt.Println(string(propages.AllAssetStore[k].Data))
+	}
+	// for _, k := range propages.Assets {
+	// 	fmt.Println("\t", k)
+	// 	fmt.Println(string(propages.AllAssetStore[k].Data))
+	// }
 
 	// Fetch metadata from the first page
 	// var metaData fetch.PageMetadata

@@ -3,6 +3,8 @@ package process
 import (
 	"log"
 	"mime"
+	"net/url"
+	"slices"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/fetch"
@@ -10,11 +12,11 @@ import (
 )
 
 type AllAssets struct {
-	XhtmlPages, Asssets []string
-	AllAssetStore       map[string]fetch.Asset
+	XhtmlPages, Assets []string
+	AllAssetStore      map[string]fetch.Asset
 }
 
-func ConvertHtml(allAssets fetch.PageTable) AllAssets {
+func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 	// The Uri not always end in .html
 	var (
 		pageNumber, assetNumber uint
@@ -22,30 +24,37 @@ func ConvertHtml(allAssets fetch.PageTable) AllAssets {
 		assets                  = make([]string, len(allAssets))
 		allAssetsStore          = make(map[string]fetch.Asset)
 		xhtmlMime               = mime.TypeByExtension(".xhtml")
+		htmlMime                = mime.TypeByExtension(".html") // Also pay attention to encoding
 	)
-	for uri, data := range allAssets {
+	keys := make([]url.URL, 0, len(allAssets))
+	for u := range allAssets {
+		keys = append(keys, u)
+	}
+	slices.SortFunc(keys, func(a, b url.URL) int {
+		return strings.Compare(a.EscapedPath(), b.EscapedPath())
+	})
+
+	for _, uri := range keys {
+		data := allAssets[uri]
 		path := uri.EscapedPath()
-		isHtml, newName := toConvert(path)
 		// If it is html then insert it in new map
 		// for pages
-		if isHtml {
+		if strings.Contains(data.MediaType, htmlMime) {
 			xhtml := tidy.TidyHTML(data.Data)
-			pages[pageNumber] = "page:" + newName
+			pages[pageNumber] = newName(path)
 			allAssetsStore[pages[pageNumber]] = fetch.Asset{
 				Data: xhtml,
 				Metadata: fetch.Metadata{
 					MediaType: xhtmlMime,
-					Title:     data.Title,
 				},
 			}
 			pageNumber += 1
 		} else {
-			assets[assetNumber] = "asset:" + path
+			assets[assetNumber] = path
 			allAssetsStore[assets[assetNumber]] = fetch.Asset{
 				Data: data.Data,
 				Metadata: fetch.Metadata{
 					MediaType: data.MediaType,
-					Title:     data.Title,
 				},
 			}
 			assetNumber += 1
@@ -54,23 +63,15 @@ func ConvertHtml(allAssets fetch.PageTable) AllAssets {
 	return AllAssets{pages, assets, allAssetsStore}
 }
 
-// This function makes decision to run the tidy html function or not
-// and also suggests new name
-func toConvert(path string) (bool, string) {
+func newName(path string) string {
 	if strings.HasSuffix(path, "html") {
 		newName, found := strings.CutSuffix(path, "html")
 		if found {
 			newName += "xhtml"
-			return true, newName
+			return newName
 		} else {
-			log.Fatal("Cannot find the html in file's name")
+			log.Fatal("Unreachable")
 		}
 	}
-	return false, ""
+	return path + ".xhtml"
 }
-
-// func GetMetadata(pages fetch.PageTable) {
-// 	for url, data := range pages {
-// 		url
-// 	}
-// }

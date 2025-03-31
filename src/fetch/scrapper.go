@@ -2,6 +2,7 @@ package fetch
 
 import (
 	"bytes"
+	"fmt"
 	"log"
 	"net/url"
 	"strings"
@@ -21,7 +22,6 @@ type Asset struct {
 type Metadata struct {
 	// TODO: make this enum later
 	MediaType string
-	Title     string
 }
 
 // These are header collected from some pages have not figured out how to use it effectively
@@ -51,14 +51,15 @@ var header = map[string][]string{
 // TODO: there is a feature to use regex to mactch urls, need to find out how to expose it to users
 func Scrapper(target url.URL, argu app.Options) PageTable {
 	pagesContents := make(PageTable)
-	// println("Domain Name: ", target.String())
-	// println("Depth: ", argu.Depth)
+	println("Domain Name: ", target.String())
+	println("Depth: ", argu.Depth)
 
 	rawAllowDomains := []url.URL{target}
 	if len(argu.AllowDomains) > 0 {
 		rawAllowDomains = append(rawAllowDomains, argu.AllowDomains...)
 	}
 	allowDomains := stringOfURL(rawAllowDomains)
+	println("AllowedDomains: ", allowDomains[0])
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
@@ -76,7 +77,7 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 
 	collector.OnRequest(func(r *colly.Request) {
 		// r.Headers = (*http.Header)(&header)
-		// fmt.Println("Visiting", r.URL.String())
+		fmt.Println("Visiting", r.URL.String())
 	})
 
 	//TODO: this cannot be left empty so what to do here
@@ -96,7 +97,6 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 				// Assign this properly
 				Metadata: Metadata{
 					//TODO: Title is only possible for HTML so what should be title other things
-					Title:     "",
 					MediaType: res.Headers.Get("content-type"),
 				},
 			}
@@ -104,7 +104,7 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 			// if err != nil {
 			// 	size = 0
 			// }
-			// fmt.Printf("On page: %v\n", res.Request.URL)
+			fmt.Printf("On page: %v\n", res.Request.URL)
 			// fmt.Printf("Page Headers: %+v\n", res.Headers)
 		}
 	})
