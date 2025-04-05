@@ -19,12 +19,12 @@ type AllAssets struct {
 func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 	// The Uri not always end in .html
 	var (
-		pageNumber, assetNumber uint
-		pages                   = make([]string, len(allAssets))
-		assets                  = make([]string, len(allAssets))
-		allAssetsStore          = make(map[string]fetch.Asset)
-		xhtmlMime               = mime.TypeByExtension(".xhtml")
-		htmlMime                = "text/html" // Also pay attention to encoding
+		pageNumber, assetNumber uint = 0, 0
+		pages                        = make([]string, len(allAssets))
+		assets                       = make([]string, len(allAssets))
+		allAssetsStore               = make(map[string]fetch.Asset)
+		xhtmlMime                    = mime.TypeByExtension(".xhtml")
+		htmlMime                     = "text/html" // Also pay attention to encoding
 	)
 	keys := make([]url.URL, 0, len(allAssets))
 	for u := range allAssets {
@@ -38,29 +38,37 @@ func OrderAndConvertPages(allAssets fetch.PageTable) AllAssets {
 		data := allAssets[uri]
 		path := strings.TrimPrefix(uri.EscapedPath(), "/")
 		// minor hack
-		if strings.HasSuffix(path, "/") {
+		if path == "" {
+			if strings.Contains(data.MediaType, htmlMime) {
+				log.Println("Edge case path of ``")
+				path = "root.html"
+			}
+		} else if path == "/" {
+			log.Println("Edge case path of `/`: ", path)
+		} else if strings.HasSuffix(path, "/") {
 			path = strings.TrimSuffix(path, "/")
 			path += ".html"
 		}
 
 		if strings.Contains(data.MediaType, htmlMime) {
 			xhtml := tidy.TidyHTML(data.Data)
-			if xhtml != nil {
-				println("Length: ", len(xhtml))
-				pages[pageNumber] = newName(path)
-				allAssetsStore[pages[pageNumber]] = fetch.Asset{
-					Data: xhtml,
-					Metadata: fetch.Metadata{
-						MediaType: xhtmlMime,
-					},
-				}
-				pageNumber += 1
-			} else {
+			if xhtml == nil {
 				log.Printf("Path: %s", path)
+				continue
 			}
+			println("Path: ", path, "Length: ", len(xhtml))
+			newpath := newName(path)
+			pages[pageNumber] = newpath
+			allAssetsStore[newpath] = fetch.Asset{
+				Data: xhtml,
+				Metadata: fetch.Metadata{
+					MediaType: xhtmlMime,
+				},
+			}
+			pageNumber += 1
 		} else {
 			assets[assetNumber] = path
-			allAssetsStore[assets[assetNumber]] = fetch.Asset{
+			allAssetsStore[path] = fetch.Asset{
 				Data: data.Data,
 				Metadata: fetch.Metadata{
 					MediaType: data.MediaType,
@@ -90,6 +98,9 @@ func newName(path string) string {
 		path = strings.TrimSuffix(path, "/")
 		return path + ".xhtml"
 	}
-	log.Fatalln("Should be Unreachable.")
-	return ""
+	if path == "" {
+		return "base.xhtml"
+	}
+	path += ".xhtml"
+	return path
 }

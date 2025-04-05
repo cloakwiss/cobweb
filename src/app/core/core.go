@@ -1,4 +1,4 @@
-package core 
+package core
 
 import (
 	"bufio"
@@ -17,7 +17,8 @@ func Launch(args app.Options) string {
 	pages := fetch.Scrapper(args.Targets, args)
 
 	for key := range pages {
-		fmt.Printf("Page: %s\n", key.String())
+		fmt.Printf("Page: %s\n\tPath: %s\n", key.String(), key.EscapedPath())
+
 		// fmt.Printf("MediaType: %+v\n", val.MediaType)
 		// Pay attention to the extra `/` at the start of path
 		// stripped := strings.TrimLeft(key.Path, "/")
@@ -82,14 +83,11 @@ func Launch(args app.Options) string {
 	filesBlobs = append(filesBlobs, zip.Pair{File: "META-INF/container.xml", Bytes: containerXml})
 	filesBlobs = append(filesBlobs, zip.Pair{File: "content.opf", Bytes: contentOpf})
 	filesBlobs = append(filesBlobs, zip.Pair{File: "nav.xhtml", Bytes: toc})
-	// for _, f := range filesBlobs {
-	// 	println(f.File, "\t::\t", string(f.Bytes), "\n\n\n")
-	// }
-	for i := range processed.XhtmlPages {
-		filename := processed.XhtmlPages[i]
+
+	for _, filename := range processed.XhtmlPages {
 		blob, found := processed.AllAssetStore[filename]
 		if !found {
-			log.Printf("Not found: `%s`", filename)
+			log.Printf("Not found: `%s`\t `%+v`", filename, blob.Metadata)
 		} else {
 			filesBlobs = append(filesBlobs, zip.Pair{
 				File:  filename,
@@ -97,8 +95,7 @@ func Launch(args app.Options) string {
 			})
 		}
 	}
-	for i := range processed.Assets {
-		filename := processed.Assets[i]
+	for _, filename := range processed.Assets {
 		blob, found := processed.AllAssetStore[filename]
 		if !found {
 			log.Printf("Not found: `%s`", filename)
@@ -111,5 +108,5 @@ func Launch(args app.Options) string {
 	}
 	zip.WriteTozip(filesBlobs, args.Output+".epub")
 
-	return args.Output+".epub"
+	return args.Output + ".epub"
 }

@@ -22,25 +22,38 @@ type File struct {
 	Name string
 }
 
+type kv struct {
+	key   string
+	value []string
+}
+
+func find(dir []kv, needle string) (idx int, found bool) {
+	for i := range dir {
+		if dir[i].key == needle {
+			return i, true
+		}
+	}
+	return -1, false
+}
+
 // The Input should be filtered and sorted before hand
 func directoryTree(root string, dirlisting []string) Directory {
 	var (
-		subDirs map[string][]string = make(map[string][]string)
+		subDirs []kv = make([]kv, 0)
 		files   []string
 	)
 
 	for i := range dirlisting {
-		// removing leading slashes
-		if newStr, found := strings.CutPrefix(dirlisting[i], "/"); found {
-			dirlisting[i] = newStr
-		}
 		// classifying
 		if strings.ContainsAny(dirlisting[i], "/") {
 			dir, rest, _ := strings.Cut(dirlisting[i], "/")
-			if _, found := subDirs[dir]; !found {
-				subDirs[dir] = make([]string, 0)
+			idx, found := find(subDirs, dir)
+			if !found {
+				subDirs = append(subDirs, kv{key: dir, value: []string{rest}})
+			} else {
+				subDirs[idx].value = append(subDirs[idx].value, rest)
 			}
-			subDirs[dir] = append(subDirs[dir], rest)
+
 		} else {
 			files = append(files, dirlisting[i])
 		}
@@ -52,14 +65,8 @@ func directoryTree(root string, dirlisting []string) Directory {
 		processedDirs  []Directory = make([]Directory, 0)
 	)
 
-	for dir, sub := range subDirs {
-		var localpath string
-		if root != "" {
-			localpath = root + "/" + dir
-		} else {
-			localpath = dir
-		}
-		processedDirs = append(processedDirs, directoryTree(localpath, sub))
+	for i := range subDirs {
+		processedDirs = append(processedDirs, directoryTree(subDirs[i].key, subDirs[i].value))
 	}
 	for i := range files {
 		processedFiles[i] = File{Name: files[i], Path: root}
@@ -80,7 +87,7 @@ func directoryTree(root string, dirlisting []string) Directory {
 }
 
 func GenerateDirectoryTree(fileslist []string) Directory {
-	return directoryTree("root", fileslist)
+	return directoryTree("", fileslist)
 }
 
 func MarshalToc(dir Directory, writeBuffer *bufio.Writer) {
@@ -114,33 +121,37 @@ func marshalToc(dir Directory, indent int, writeBuffer *bufio.Writer) {
 	l1 := strings.Repeat("  ", indent+1)
 	l2 := strings.Repeat("  ", indent+2)
 
-	writeBuffer.WriteString(l0 + "<li>")
-	defer func() {
-		writeBuffer.WriteString(l0 + "</li>\n")
-		writeBuffer.Flush()
-	}()
+	if dir.Path == "" {
+		for _, subdir := range dir.SubDirs {
+			marshalToc(subdir, indent, writeBuffer)
+		}
+	} else {
+		writeBuffer.WriteString(l0 + "<li>")
+		writeBuffer.WriteString("<span>")
 
-	writeBuffer.WriteString("<span>")
-	if er := xml.EscapeText(writeBuffer, []byte(dir.Path)); er != nil {
-		log.Fatal("Marshalling Toc failed during writing Path")
-	}
-	writeBuffer.WriteString("</span>\n")
-
-	writeBuffer.WriteString(l1 + "<ol>\n")
-	writeBuffer.Flush()
-
-	for _, subdir := range dir.SubDirs {
-		marshalToc(subdir, indent+1, writeBuffer)
-	}
-
-	for _, file := range dir.Files {
-		writeBuffer.WriteString(l2 + "<li><a href=\"")
-		writeBuffer.WriteString(file.Path + "/" + file.Name)
-		writeBuffer.WriteString("\">")
-		if er := xml.EscapeText(writeBuffer, []byte(file.Name)); er != nil {
+		if er := xml.EscapeText(writeBuffer, []byte(dir.Path)); er != nil {
 			log.Fatal("Marshalling Toc failed during writing Path")
 		}
-		writeBuffer.WriteString("</a></li>\n")
+
+		writeBuffer.WriteString("</span>\n")
+		writeBuffer.WriteString(l1 + "<ol>\n")
+
+		for _, subdir := range dir.SubDirs {
+			marshalToc(subdir, indent+1, writeBuffer)
+		}
+
+		for _, file := range dir.Files {
+			writeBuffer.WriteString(l2 + "<li><a href=\"")
+			writeBuffer.WriteString(file.Path + "/" + file.Name)
+			writeBuffer.WriteString("\">")
+			if er := xml.EscapeText(writeBuffer, []byte(file.Name)); er != nil {
+				log.Fatal("Marshalling Toc failed during writing Path")
+			}
+			writeBuffer.WriteString("</a></li>\n")
+		}
+
+		writeBuffer.WriteString(l1 + "</ol>\n")
+		writeBuffer.WriteString(l0 + "</li>\n")
+		writeBuffer.Flush()
 	}
-	writeBuffer.WriteString(l1 + "</ol>\n")
 }

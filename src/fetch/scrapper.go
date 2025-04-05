@@ -55,11 +55,12 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 
 	rawAllowDomains := []url.URL{target}
 	allowDomains := []string{}
-	if len(argu.AllowDomains) > 0 {
+	{
 		rawAllowDomains = append(rawAllowDomains, argu.AllowDomains...)
 		allowDomains = stringOfURL(rawAllowDomains)
 		println("AllowedDomains: ", allowDomains)
 	}
+	println("Domain Name: ", allowDomains[0])
 
 	// recurse limit is unused
 	collector := colly.NewCollector(
@@ -68,8 +69,6 @@ func Scrapper(target url.URL, argu app.Options) PageTable {
 		colly.MaxDepth(int(argu.Depth)+1),
 		colly.UserAgent(header["User-Agent"][1]),
 	)
-
-	collector.Limit(&colly.LimitRule{Parallelism: 3})
 
 	//TODO: do not change the order of these callback methods
 	// https://go-colly.org/docs/introduction/start/ read this

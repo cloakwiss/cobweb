@@ -3,7 +3,7 @@ package manifests
 import (
 	"bufio"
 	"encoding/xml"
-	"mime"
+	"fmt"
 	"strings"
 
 	"github.com/cloakwiss/cobweb/epub/process"
@@ -57,16 +57,6 @@ func NewContainer(writeBuffer *bufio.Writer, path string) error {
 }
 
 // content.opf
-
-// metadata section of content.opf
-
-// var DublinCoreElements = [][]string{
-// 	// Required
-// 	{"identifier", "title", "language"},
-// 	// Optional
-// 	{"contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type"},
-// }
-
 // Store all the data in map and then based on the key decide
 // if they need tag like <dc:_key_>_value_</dc:_key_> or <meta property="_key_"> _value_ </meta>
 func GenerateMetadataSection(writeBuffer *bufio.Writer, items map[string]string) (er error) {
@@ -76,10 +66,9 @@ func GenerateMetadataSection(writeBuffer *bufio.Writer, items map[string]string)
 	for element, value := range items {
 		var data string
 		switch element {
-		case "language", "title":
-			data = "    <dc:" + element + ">" + value + "</dc:" + element + ">\n"
-		case "identifier":
-			data = "    <dc:" + element + ">" + "urn:uuid:A1B0D67E-2E81-4DF5-9E67-A64CBE366809" + "</dc:" + element + ">\n"
+		// TODO: we need to calculate uuid of something at some point.
+		case "language", "title", "identifier":
+			data = fmt.Sprintf("    <dc:%s>%s</dc:%s>\n", element, value, element)
 		case "contributor", "coverage", "creator", "date", "description", "format", "publisher", "relation", "rights", "source", "subject", "type":
 			//TODO: this is incomplete and I have to figure out if mapping from html page's meta section can be mapped directly
 		default:
@@ -141,7 +130,6 @@ func GenerateSpineSection(writeBuffer *bufio.Writer, items []SpineItem) error {
 
 // Maybe the pages should be more refined which contains the more info
 func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata fetch.PageMetadata, assets process.AllAssets) error {
-	xhtmlMime := mime.TypeByExtension(".xhtml")
 	closing, er := GeneratePackageStart(writeBuffer, mandatoryMetadata.Title)
 	if er != nil {
 		return er
@@ -159,18 +147,25 @@ func GenerateContentOpf(writeBuffer *bufio.Writer, mandatoryMetadata fetch.PageM
 	})
 	manifestItems := make([]ManifestItem, 0, len(assets.Assets)+len(assets.XhtmlPages))
 	spineItems := make([]SpineItem, 0, len(assets.XhtmlPages))
-	//TODO: This can be changed
-	for url, pagedata := range assets.AllAssetStore {
+	//TODO: This needs to be changed to make it ordered
+	for _, url := range assets.XhtmlPages {
+		data := assets.AllAssetStore[url]
 		manifestItems = append(manifestItems, ManifestItem{
 			FileId:    url,
 			FilePath:  url,
-			MediaType: pagedata.MediaType,
+			MediaType: data.MediaType,
 		})
-		if pagedata.MediaType == xhtmlMime {
-			spineItems = append(spineItems, SpineItem{
-				Idref: url,
-			})
-		}
+		spineItems = append(spineItems, SpineItem{
+			Idref: url,
+		})
+	}
+	for _, url := range assets.Assets {
+		data := assets.AllAssetStore[url]
+		manifestItems = append(manifestItems, ManifestItem{
+			FileId:    url,
+			FilePath:  url,
+			MediaType: data.MediaType,
+		})
 	}
 	GenerateManifestSection(writeBuffer, manifestItems)
 	GenerateSpineSection(writeBuffer, spineItems)
